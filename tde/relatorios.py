@@ -5,14 +5,19 @@ from datetime import datetime
 from reposicao import cancelar_repo, cadastrar_repo
 from estruturas import historico,limpar_tela, medicamentos
 import time
+import pyfiglet
+from colorama import Fore, Style, init
+
+# Inicializa o colorama (necessário para compatibilidade com Windows)
+init(autoreset=True)
 
 # MENU
 def menu_hist() :
     while True:
         limpar_tela()
-        print("========================================= ")
-        print("             MENU DE HISTÓRICO            ")
-        print("========================================= ")
+        print(Fore.YELLOW  +"========================================= ")
+        print(Fore.GREEN  +"             MENU DE HISTÓRICO            ")
+        print(Fore.YELLOW  +"========================================= ")
         print(
                 " [1] - Listar Histórico \n",
                 "[2] - Desfazer / Voltar histórico \n"

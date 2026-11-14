@@ -15,6 +15,11 @@ from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from estoque import gerar_id
 import time
 import os
+import pyfiglet
+from colorama import Fore, Style, init
+
+# Inicializa o colorama (necessário para compatibilidade com Windows)
+init(autoreset=True)
 
 # FUNÇÃO PARA LIMPAR TELA
 def limpar_tela():
@@ -36,9 +41,9 @@ def categoria() :
 def menu_med() :
     while True:
         limpar_tela()
-        print("========================================= ")
-        print("          MENU DE MEDICAMENTOS            ")
-        print("========================================= \n")
+        print(Fore.YELLOW  + "========================================= ")
+        print(Fore.GREEN  +"          MENU DE MEDICAMENTOS            ")
+        print(Fore.YELLOW  + "========================================= \n")
         print(" [1] - Adicionar medicamento \n",
             "[2] - Alterar medicamento \n",
             "[3] - Remover medicamento \n",
@@ -72,7 +77,7 @@ def menu_med() :
                     "categoria": categoria(),
                     "estoque": estoque,
                     "preco": ler_float("Digite o preço: "), # valida e adiciona o preço
-                    "id": gerar_id() # gera um ID único
+                    "id": gerar_id() # gera um ID único para o medicamento 
                 }
                 
                 # VALIDA OS DADOS DO MEDICAMENTO

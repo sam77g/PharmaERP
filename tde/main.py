@@ -12,7 +12,7 @@ from colorama import Fore, Style, init
 init(autoreset=True)
 
 # Gera a arte do texto
-texto_art = pyfiglet.figlet_format("PharmaERP", font="slant")
+texto_art = pyfiglet.figlet_format("\nPharmaERP", font="rozzo")
 
 # Imprime o título em verde brilhante
 print(Fore.GREEN + Style.BRIGHT + texto_art)
@@ -39,15 +39,15 @@ from validar import ler_int
 
 while True:
     # MENU DO SISTEMA
-    print("========== SISTEMA DE CONTROLE PharmaERP ============ \n")
+    print(Fore.YELLOW  + "========== SISTEMA DE CONTROLE PharmaERP ============ \n")
     print(
         "  [1] - Menu Medicamentos\n",
         " [2] - Reposição \n",
         " [3] - Histórico \n",
-        "  [0] - Sair \n"
+        " [0] - Sair \n"
     )
-    print("=================================================== \n")
-    opcao = ler_int("[OPÇÃO] : ")
+    print(Fore.YELLOW  + "=================================================== \n")
+    opcao = ler_int("[OPÇÃO] :")
 
     # MATCH CASE PARA A OPÇÃO DIGITADA
     match opcao:

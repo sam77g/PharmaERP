@@ -4,20 +4,25 @@ from collections import deque
 from estoque import gerar_id, gerar_id_repo
 from estruturas import solicitacoes_reposicao, limpar_tela, medicamentos 
 import time
+import pyfiglet
+from colorama import Fore, Style, init
+
+# Inicializa o colorama (necessário para compatibilidade com Windows)
+init(autoreset=True)
 
 # ===== MENU DE REPOSIÇÃO ====
 def menu_repo():
     while True :
         limpar_tela()
-        print("========================================= ")
-        print("          MENU DE REPOSIÇÃO            ")
-        print("========================================= \n")
+        print(Fore.YELLOW  +"========================================= ")
+        print(Fore.GREEN  +"          MENU DE REPOSIÇÃO            ")
+        print(Fore.YELLOW  +"========================================= \n")
         print(" [1] - Buscar reposição \n",
-              "[2] - Listar reposições \n",
-              "[3] - Atender reposição \n",
-              "[4] - Cancelar reposição \n",
-              "[5] - Alterar \n",
-              "[0] - Voltar \n")
+            "[2] - Listar reposições \n",
+            "[3] - Atender reposição \n",
+            "[4] - Cancelar reposição \n",
+            "[5] - Alterar \n",
+            "[0] - Voltar \n")
         
         # se digitar letra não quebra, só volta pro menu
         try:

@@ -64,7 +64,7 @@ def validar_estoque(valor):
         return False
 
     return True
- 
+
 
 # VALIDA SE O ID ESTÁ DISPONÍVEL
 def validar_id(med_id, lista_medicamentos, ignorar_id=None):
