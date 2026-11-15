@@ -174,7 +174,11 @@ def listar_medicamentos() :
 
 
 # FUNÇÃO DE BUSCAR MEDICAMENTOS POR CATEGORIA
-# Complexidade 
+""" 
+Complexidade 
+- O(n) no pior caso
+- O(1) no melhor caso
+"""
 def buscar_medicamento_cat(categoria_nome):
     # filtra todos os medicamentos da mesma categoria
     # Equivale a :
@@ -209,13 +213,16 @@ def buscar_medicamento_cat(categoria_nome):
 # O(1) no melhor caso 
 # O(n) no pior caso
 def buscar_medicamento(nome):
+    
+    nome = nome.strip().lower
+    
     if len(medicamentos) == 0 :
         print(Fore.RED + " LISTA VAZIA, IMPOSSÍVEL BUSCAR ! \n")
-    elif nome.strip().lower() == '' :
+    elif nome == '' :
         print(Fore.RED + " NOME VAZIO ! ")
     else : 
         for i in medicamentos :
-            if i["medicamento"].lower() == nome.lower(): # compara os nomes 
+            if i["medicamento"].strip().lower == nome: # compara os nomes 
                 print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
                 print(f"quantidade : {i['estoque']} " )  
                 print(f"preço : {i['preco']} ")
@@ -224,10 +231,11 @@ def buscar_medicamento(nome):
         return print(Fore.RED + "MEDICAMENTO NÃO ENCONTRADO ! ")
 
     
-# função de alterar características do medicamento atrvés do nome digitado
+# função de alterar características do medicamento através do nome digitado
 def alterar_medicamento(nome) :
+    nome = nome.strip().lower() # normalizando o nome
     for medicamento in medicamentos: # percorre a lista de medicamentos
-        if medicamento["medicamento"].lower() == nome.lower(): # verifica se o nome digitado está presente na lista
+        if medicamento["medicamento"].strip().lower() == nome: # verifica se o nome digitado está presente na lista
             print(f" ----- ALTERAR {nome.upper()} ----- ")
             print(" [1] - Categoria \n",
                 "[2] - Estoque / Quantidade \n",
@@ -239,49 +247,55 @@ def alterar_medicamento(nome) :
                     nova_categoria = categoria()
                     medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
                     time.sleep(0.5)
-                    return print("Categoria alterada com sucesso") # printa para o usuário 
+                    return print(Fore.GREEN + " [SUCESS] Categoria alterada com sucesso") # printa para o usuário 
                 
                 case 2 :
                     nova_quantidade = ler_int("Digite a nova quantidade : ")
                     if not validar_estoque(nova_quantidade): # valida o valor digitado
-                        return print("Quantidade inválida!")
+                        return print(Fore.RED + "[ERROR] Quantidade inválida!")
                     else :
                         medicamento["estoque"] = nova_quantidade
                     
                     # caso esteja abaixo da quantidade mínima
                     if nova_quantidade < 15 :
                         print(Fore.RED +"---- Quantidade abaixo do estoque mínimo ! ---")
-                        print("Criando pedido de reposição ... ")
-                        time.sleep(0.5) # espera 0.5 segundos
-                        cadastrar_repo(medicamento) # cria um novo pedido de reposição
-                    elif buscar_repo(medicamento) != None : # caso a quantidade for maior e ele estiver para repor
+                        if buscar_repo(medicamento) is None : # caso já exista um pedido de reposição 
+                            print(Fore.LIGHTRED_EX + "Criando pedido de reposição ... ")
+                            cadastrar_repo(medicamento) # cria um novo pedido de reposição
+                            time.sleep(0.5) # espera 0.5 segundos
+                    elif buscar_repo(medicamento) is not None: # caso a quantidade for maior e ele estiver para repor
                         cancelar_repo(medicamento) # retira do pedidos de reposição
                         time.sleep(0.5)
-                    else : 
-                        return print(Fore.GREEN +"Quantidade alterada com sucesso") # printa para o usuário 
+                    
+                    return print(Fore.GREEN +"[SUCESS] Quantidade alterada com sucesso") # printa para o usuário 
                 
                 case 3 :
                     novo_preco = ler_float(" Digite o novo preço : ")
                     if validar_preco(novo_preco) :
                         medicamento["preco"] = novo_preco # altera o preço do medicamento
                     else :
-                        return print(Fore.GREEN +"\n [ERROR] PREÇO INVÁLIDO !  ")
+                        return print(Fore.RED +"\n [ERROR] PREÇO INVÁLIDO !  ")
                     
                     time.sleep(0.5)
-                    return print(Fore.GREEN +"\n [SUCESS] PREÇO ALTERADO COM SUCESSO ! ") # printa para o usuário 
-                    
+                    return print(Fore.GREEN +"\n [SUCESS] PREÇO ALTERADO COM SUCESSO ! ") # printa para o usuário 0
+                case _:
+                    return print(Fore.RED + "[ERROR] Opção inválida!")
+                
+    return print(Fore.RED + " [ERROR] MEDICAMENTO NÃO ENCONTRADO !")
 
 # FUNÇÃO PARA REMOVER UM MEDICAMENTO PELO NOME
 def remover_medicamento(nome):
+    nome = nome.strip().lower()
     # percorre e encontra o medicamento com o nome
     for medicamento in medicamentos:
-        if medicamento["medicamento"].lower() == nome.lower():
+        if medicamento["medicamento"].strip().lower() == nome:
             medicamentos.remove(medicamento)
             retirada(medicamento) # adiciona ao histórico a saída do medicamento
+            return print(Fore.GREEN +f"[SUCESS] {nome.upper()} REMOVIDO !")  
             if buscar_repo(medicamento) is not None:
                 cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
             return  # achou e removeu: sai da função
-    print(Fore.RED +"medicamento não encontrado !")  # só chega aqui se o for terminar sem achar
+    return print(Fore.RED +"medicamento não encontrado !")  # só chega aqui se o for terminar sem achar
 
 # FUNÇÃO PARA ORDENAR POR PREÇO
 ## Alterar para uma ordenação própria/personalizada
