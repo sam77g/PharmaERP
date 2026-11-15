@@ -61,7 +61,7 @@ def entrada(med) :
     }
     
     historico.append(entry_med) # ENTRADA NO TOPO DA PILHA
-    return print(f"O {med["medicamento"]} foi adicionado ao sistema !")
+    return print(f" \n O {med["medicamento"]} foi adicionado ao sistema !")
 
 # FUNÇAO DE REGISTRO DE SAÍDA NO ESTOQUE
 def retirada(med):
