@@ -285,7 +285,7 @@ def alterar_medicamento(nome) :
 
 # FUNÇÃO PARA REMOVER UM MEDICAMENTO PELO NOME
 def remover_medicamento(nome):
-    nome = nome.strip().lower()
+    nome = nome.strip().lower() # trata o nome para as comparações
     # percorre e encontra o medicamento com o nome
     for medicamento in medicamentos:
         if medicamento["medicamento"].strip().lower() == nome:
