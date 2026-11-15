@@ -5,28 +5,28 @@
 #     chamar as funções dos outros arquivos;
 #     controlar o fluxo geral do programa.
 
-# import pyfiglet
-#from colorama import Fore, Style, init
+import pyfiglet
+from colorama import Fore, Style, init
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
-#init(autoreset=True)
+init(autoreset=True)
 
 # Gera a arte do texto
-#texto_art = pyfiglet.figlet_format("PharmaERP", font="slant")
+texto_art = pyfiglet.figlet_format("\nPharmaERP", font="rozzo")
 
 # Imprime o título em verde brilhante
-#print(Fore.GREEN + Style.BRIGHT + texto_art)
+print(Fore.GREEN + Style.BRIGHT + texto_art)
 
 # Subtítulo e descrições
-#print(Fore.YELLOW + "Sistema de controle farmaceutico\n")
-#print(
-#    Fore.GREEN
-#    + "Samuel , Samoel , Marcos & Gabriel "
-#    + Fore.WHITE
-#    + "| "
-#   + Fore.MAGENTA
-#    + " TDE Estrutura de Dados \n"
-# )
+print(Fore.YELLOW + "Sistema de controle farmaceutico\n")
+print(
+Fore.GREEN
+    + "Samuel , Samoel , Marcos & Gabriel "
+    + Fore.WHITE
+    + "| "
+    + Fore.MAGENTA
+    + " TDE Estrutura de Dados \n"
+)
 
 # IMPORTS
 import time
@@ -39,14 +39,14 @@ from validar import ler_int
 
 while True:
     # MENU DO SISTEMA
-    print("========== SISTEMA DE CONTROLE PharmaERP ============ \n")
+    print(Fore.YELLOW  + "========== SISTEMA DE CONTROLE PharmaERP ============ \n")
     print(
         "  [1] - Menu Medicamentos\n",
         " [2] - Reposição \n",
         " [3] - Histórico \n",
-        "  [0] - Sair \n"
+        " [0] - Sair \n"
     )
-    print("=================================================== \n")
+    print(Fore.YELLOW  + "=================================================== \n")
     opcao = ler_int("[OPÇÃO] : ")
 
     # MATCH CASE PARA A OPÇÃO DIGITADA

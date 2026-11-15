@@ -5,14 +5,19 @@ from datetime import datetime
 from reposicao import cancelar_repo, cadastrar_repo
 from estruturas import historico,limpar_tela, medicamentos
 import time
+import pyfiglet
+from colorama import Fore, Style, init
+
+# Inicializa o colorama (necessário para compatibilidade com Windows)
+init(autoreset=True)
 
 # MENU
 def menu_hist() :
     while True:
         limpar_tela()
-        print("========================================= ")
-        print("             MENU DE HISTÓRICO            ")
-        print("========================================= ")
+        print(Fore.YELLOW  +"========================================= ")
+        print(Fore.GREEN  +"             MENU DE HISTÓRICO            ")
+        print(Fore.YELLOW  +"========================================= ")
         print(
                 " [1] - Listar Histórico \n",
                 "[2] - Desfazer / Voltar histórico \n"
@@ -56,7 +61,7 @@ def entrada(med) :
     }
     
     historico.append(entry_med) # ENTRADA NO TOPO DA PILHA
-    return print(f"O {med["medicamento"]} foi adicionado ao sistema !")
+    return print(f" \n O {med["medicamento"]} foi adicionado ao sistema !")
 
 # FUNÇAO DE REGISTRO DE SAÍDA NO ESTOQUE
 def retirada(med):

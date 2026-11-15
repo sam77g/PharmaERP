@@ -1,14 +1,30 @@
 # ARQUIVO COM FUNÇÕES DE VALIDAÇÃO
 
+import math # importando a biblioteca math
+import pyfiglet
+from colorama import Fore, Style, init
+
+# Inicializa o colorama (necessário para compatibilidade com Windows)
+init(autoreset=True)
 # LER FLOATS
 def ler_float(msg):
+    
     while True:
         try:
-            # consegue receber números float com virgula (ex.: 45,80:)
-            return float(input(msg).replace(",", "."))
+            # Lê o valor, substitui vírgula por ponto e converte para float
+            entrada = input(msg).replace(",", ".")
+            valor = float(entrada)
+            
+            # Verifica se o número é finito (rejeita inf, -inf e nan)
+            if not math.isfinite(valor):
+                print(Fore.RED + "[ERROR] " + Fore.LIGHTRED_EX + " O valor inserido não é um número finito (infinito ou NaN). Tente novamente.")
+            else :
+                return valor
+            
         except ValueError:
             print("Digite apenas números!")
-            
+
+
 # LER INTEIROS
 def ler_int(msg):
     while True:
@@ -34,10 +50,13 @@ def validar_preco(valor):
     # verifica se o preço é int, float ou booleano 
     if not isinstance(valor, (int, float)) or isinstance(valor, bool):
         return False
-
+    
     if valor < 0:
         return False
-
+    
+    if not math.isfinite(valor):
+        return False
+    
     return True
 
 
@@ -53,11 +72,19 @@ def validar_estoque(valor):
 
 
 # VALIDA SE O ID ESTÁ DISPONÍVEL
-def validar_id(med_id, lista_medicamentos):
-    if not validar_texto(med_id):
+def validar_id(med_id, lista_medicamentos, ignorar_id=None):
+
+    if not isinstance(med_id, int) or isinstance(med_id, bool) :
+        return False
+
+    if med_id <= 0:
         return False
 
     for medicamento in lista_medicamentos:
+        
+        if medicamento["id"] == ignorar_id:
+            continue
+        
         if medicamento["id"] == med_id:
             return False
 
@@ -78,10 +105,11 @@ def validar_nome(med_nome, lista_medicamentos, ignorar_id=None):
 
 
 # VALIDA O DICIONÁRIO DE MEDICAMENTO
-def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None):
+def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) : 
     # Verifica se é um dicionário
     if not isinstance(medicamento, dict):
         return "Erro: os dados do medicamento devem estar em um dicionário."
+    
     # Verifica os campos obrigatórios
     campos_obrigatorios = [
         "medicamento",
@@ -90,20 +118,45 @@ def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None):
         "preco",
         "id"
     ]
-    for campo in campos_obrigatorios:
-        if campo not in medicamento:
-            return f"Erro: o campo '{campo}' não foi informado."
+
+    for campo in campos_obrigatorios: 
+        if campo not in medicamento :
+            return f"Erro: o campo obrigatório '{campo}' está ausente."
+        
     # Valida o nome
     if not validar_texto(medicamento["medicamento"]):
         return "Erro: o nome do medicamento não pode estar vazio."
+    if not validar_nome(medicamento["medicamento"], lista_medicamentos, ignorar_id) :
+        return "Erro: já existe um medicamento com esse nome."
     # Valida a categoria
-    if not validar_texto(medicamento["categoria"]):
-        return "Erro: a categoria não pode estar vazia."
+    if not validar_categoria(medicamento["categoria"]) :
+        return "Erro:a categoria informada é inválida."
     # Valida o estoque
     if not validar_estoque(medicamento["estoque"]):
         return "Erro: o estoque deve ser um número inteiro positivo ou zero."
     # Valida o preço
     if not validar_preco(medicamento["preco"]):
         return "Erro: o preço deve ser um número positivo ou zero."
-
+    if not validar_id(medicamento["id"], lista_medicamentos, ignorar_id ) :
+        return "Erro: ID inválido ou já cadastrado."
     return True
+
+def validar_categoria(categoria):
+    categorias_validas = [
+        "ÉTICO",
+        "GENÉRICO",
+        "SIMILAR"
+    ]
+
+    if not validar_texto(categoria):
+        return False
+    
+    categoria_limpa = categoria.strip()
+
+    
+    if categoria_limpa.upper() not in categorias_validas :
+        return False
+    
+    return True
+            
+    
