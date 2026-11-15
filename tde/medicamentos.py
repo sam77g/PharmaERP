@@ -7,7 +7,7 @@
 # alterar_medicamento()
 # remover_medicamento()
 # Também terá algumas validações
-from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome)
+from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome, validar_preco)
 from collections import deque 
 from estruturas import medicamentos
 from relatorios import entrada, retirada
@@ -54,12 +54,8 @@ def menu_med() :
             " [0] - Voltar \n")
         
         # VERIFICA O VALOR DIGITADO
-        try :
-            op_med = ler_int("Digite sua ação :  ") # verifica se realmente é int
-        except ValueError: # caso der "ValueError" ele avisa
-            print("Digite apenas números!")
-            time.sleep(1)
-            continue
+        op_med = ler_int("Digite sua ação :  ") # verifica se realmente é int
+
         
         print("----------------------------------------")
         
@@ -171,13 +167,14 @@ def listar_medicamentos() :
     else :
         for i in medicamentos :
             print(Fore.GREEN + f"==================== {i["medicamento"].upper()} ======================= \n")
-            print(f"quantidade : {i["estoque"]} " )  
+            print(f"quantidade : {i['estoque']} " )  
             print(f"preço : {i["preco"]} ")
-            print(f"categoria : {i["categoria"]} \n")
+            print(f"categoria : {i['categoria']} \n")
         
 
 
 # FUNÇÃO DE BUSCAR MEDICAMENTOS POR CATEGORIA
+# Complexidade 
 def buscar_medicamento_cat(categoria_nome):
     # filtra todos os medicamentos da mesma categoria
     # Equivale a :
@@ -194,13 +191,13 @@ def buscar_medicamento_cat(categoria_nome):
 
     # Se não houver nenhum medicamento com a categoria correspondente
     if not encontrados:
-        print(f"Nenhum medicamento cadastrado na categoria {categoria_nome}.")
+        print(Fore.RED + f"Nenhum medicamento cadastrado na categoria {categoria_nome}.")
         return []
     
     # Printa os medicamentos com a categoria desejada
-    print(Fore.YELLOW + f"=========== CATEGORIA: {categoria_nome.upper()} ({len(encontrados)}) ===========\n")
+    print( f"=========== CATEGORIA: {categoria_nome.upper()} ({len(encontrados)}) ===========\n")
     for i in encontrados: # percorre os encontrados
-        print(f"==================== {i['medicamento'].upper()} ======================= \n")
+        print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
         print(f"quantidade : {i['estoque']} ")
         print(f"preço : {i['preco']} ")
         print(f"ID : {i['id']} \n")
@@ -208,15 +205,23 @@ def buscar_medicamento_cat(categoria_nome):
     return encontrados
 
 # FUNÇÃO DE BUSCAR MEDICAMENTOS PELO NOME
+# Complexidade :
+# O(1) no melhor caso 
+# O(n) no pior caso
 def buscar_medicamento(nome):
-    
-    for i in medicamentos :
-        if i["medicamento"].lower() == nome.lower(): # compara os nomes 
-            print(Fore.YELLOW + f"==================== {i["medicamento"].upper()} ======================= \n")
-            print(f"quantidade : {i["estoque"]} " )  
-            print(f"preço : {i["preco"]} ")
-            print(f"ID : {i["id"]} \n")
-            return i
+    if len(medicamentos) == 0 :
+        print(Fore.RED + " LISTA VAZIA, IMPOSSÍVEL BUSCAR ! \n")
+    elif nome.strip().lower() == '' :
+        print(Fore.RED + " NOME VAZIO ! ")
+    else : 
+        for i in medicamentos :
+            if i["medicamento"].lower() == nome.lower(): # compara os nomes 
+                print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
+                print(f"quantidade : {i['estoque']} " )  
+                print(f"preço : {i['preco']} ")
+                print(f"ID : {i['id']} \n")
+                return i
+        return print(Fore.RED + "MEDICAMENTO NÃO ENCONTRADO ! ")
 
     
 # função de alterar características do medicamento atrvés do nome digitado
@@ -240,6 +245,8 @@ def alterar_medicamento(nome) :
                     nova_quantidade = ler_int("Digite a nova quantidade : ")
                     if not validar_estoque(nova_quantidade): # valida o valor digitado
                         return print("Quantidade inválida!")
+                    else :
+                        medicamento["estoque"] = nova_quantidade
                     
                     # caso esteja abaixo da quantidade mínima
                     if nova_quantidade < 15 :
@@ -250,13 +257,18 @@ def alterar_medicamento(nome) :
                     elif buscar_repo(medicamento) != None : # caso a quantidade for maior e ele estiver para repor
                         cancelar_repo(medicamento) # retira do pedidos de reposição
                         time.sleep(0.5)
-                    return print(Fore.GREEN +"Quantidade alterada com sucesso") # printa para o usuário 
+                    else : 
+                        return print(Fore.GREEN +"Quantidade alterada com sucesso") # printa para o usuário 
                 
                 case 3 :
-                    novo_preco = ler_float("Digite o novo preço : ")
-                    medicamento["preco"] = novo_preco # altera o preço do medicamento
-                    time.sleep(1.5)
-                    return print(Fore.GREEN +"Preço alterado com sucesso") # printa para o usuário 
+                    novo_preco = ler_float(" Digite o novo preço : ")
+                    if validar_preco(novo_preco) :
+                        medicamento["preco"] = novo_preco # altera o preço do medicamento
+                    else :
+                        return print(Fore.GREEN +"\n [ERROR] PREÇO INVÁLIDO !  ")
+                    
+                    time.sleep(0.5)
+                    return print(Fore.GREEN +"\n [SUCESS] PREÇO ALTERADO COM SUCESSO ! ") # printa para o usuário 
                     
 
 # FUNÇÃO PARA REMOVER UM MEDICAMENTO PELO NOME

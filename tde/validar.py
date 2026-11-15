@@ -1,6 +1,11 @@
 # ARQUIVO COM FUNÇÕES DE VALIDAÇÃO
 
 import math # importando a biblioteca math
+import pyfiglet
+from colorama import Fore, Style, init
+
+# Inicializa o colorama (necessário para compatibilidade com Windows)
+init(autoreset=True)
 # LER FLOATS
 def ler_float(msg):
     
@@ -12,7 +17,7 @@ def ler_float(msg):
             
             # Verifica se o número é finito (rejeita inf, -inf e nan)
             if not math.isfinite(valor):
-                print("Erro: O valor inserido não é um número finito (infinito ou NaN). Tente novamente.")
+                print(Fore.RED + "[ERROR] " + Fore.LIGHTRED_EX + " O valor inserido não é um número finito (infinito ou NaN). Tente novamente.")
             else :
                 return valor
             
