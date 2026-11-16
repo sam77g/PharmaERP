@@ -22,7 +22,7 @@ def ler_float(msg):
                 return valor
             
         except ValueError:
-            print("Digite apenas números!")
+            print(Fore.RED + " [ERROR] Digite apenas números!")
 
 
 # LER INTEIROS
@@ -31,7 +31,7 @@ def ler_int(msg):
         try:
             return int(input(msg))
         except ValueError:
-            print("Digite apenas números inteiros!")
+            print(Fore.RED + " [ERROR] Digite apenas números inteiros!")
 
 # VALIDA O TEXTO DIGITADO
 def validar_texto(valor):
@@ -108,7 +108,7 @@ def validar_nome(med_nome, lista_medicamentos, ignorar_id=None):
 def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) : 
     # Verifica se é um dicionário
     if not isinstance(medicamento, dict):
-        return "Erro: os dados do medicamento devem estar em um dicionário."
+        return Fore.RED +"Erro: os dados do medicamento devem estar em um dicionário."
     
     # Verifica os campos obrigatórios
     campos_obrigatorios = [
@@ -121,24 +121,24 @@ def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) :
 
     for campo in campos_obrigatorios: 
         if campo not in medicamento :
-            return f"Erro: o campo obrigatório '{campo}' está ausente."
+            return Fore.RED +f"[ERROR] o campo obrigatório '{campo}' está ausente."
         
     # Valida o nome
     if not validar_texto(medicamento["medicamento"]):
-        return "Erro: o nome do medicamento não pode estar vazio."
+        return Fore.RED +"[ERROR] o nome do medicamento não pode estar vazio."
     if not validar_nome(medicamento["medicamento"], lista_medicamentos, ignorar_id) :
-        return "Erro: já existe um medicamento com esse nome."
+        return Fore.RED +"[ERROR] já existe um medicamento com esse nome."
     # Valida a categoria
     if not validar_categoria(medicamento["categoria"]) :
-        return "Erro:a categoria informada é inválida."
+        return Fore.RED +"[ERROR]a categoria informada é inválida."
     # Valida o estoque
     if not validar_estoque(medicamento["estoque"]):
-        return "Erro: o estoque deve ser um número inteiro positivo ou zero."
+        return Fore.RED +"[ERROR] o estoque deve ser um número inteiro positivo ou zero."
     # Valida o preço
     if not validar_preco(medicamento["preco"]):
-        return "Erro: o preço deve ser um número positivo ou zero."
+        return Fore.RED +"[ERROR] o preço deve ser um número positivo ou zero."
     if not validar_id(medicamento["id"], lista_medicamentos, ignorar_id ) :
-        return "Erro: ID inválido ou já cadastrado."
+        return Fore.RED +"[ERROR] ID inválido ou já cadastrado."
     return True
 
 def validar_categoria(categoria):

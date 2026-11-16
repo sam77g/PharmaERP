@@ -39,15 +39,15 @@ def menu_hist() :
             case 1 :
                 listar_historico()
                 time.sleep(1)
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             case 2 :
                 desfazer_ultima()
                 time.sleep(1)
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             case 0 :
-                print("Voltando para o menu principal ...")
+                print(Fore.LIGHTGREEN_EX +"Voltando para o menu principal ...")
                 time.sleep(0.5)
                 limpar_tela()
                 return
@@ -81,13 +81,13 @@ def retirada(med):
         "data": data_formatada
     }
     historico.append(out_med)  # registra a saída (antes era historico.pop())
-    return print(f"O {med['medicamento'].upper()} foi retirado ")
+    return print(Fore.GREEN +f"O {med['medicamento'].upper()} foi retirado ")
 
 # FUNÇÃO PARA LISTAR O HISTÓRICO
 def listar_historico() :
     limpar_tela() # limpa a tela do terminal
     for i in reversed(historico) : 
-        print(f"==================== {i['medicamento'].upper()} ({i['tipo']}) =======================\n")
+        print(Fore.GREEN +f"==================== {i['medicamento'].upper()} ({i['tipo']}) =======================\n")
         print(f"ID : {i['id_medicamento']} \n")
         print(f"Data : {i['data']} \n")
         print(f"Categoria : {i['dados']['categoria']}")
@@ -98,7 +98,7 @@ def listar_historico() :
 # FUNÇÃO PARA DESFAZER A ULTIMA AÇÃO NO HISTÓRICO
 def desfazer_ultima():
     if not historico:
-        print("Nada para desfazer.")
+        print(Fore.LIGHTRED_EX +"Nada para desfazer.")
         return
     mov = historico.pop()
     
