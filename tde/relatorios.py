@@ -105,7 +105,7 @@ def desfazer_ultima():
         medicamentos.append(med)
         if med["estoque"] < 15:
             cadastrar_repo(med)
-    else :
+    elif mov["tipo"] == "REMOÇÃO":
         med = mov["dados"]
         medicamentos.append(med)
         
@@ -130,7 +130,6 @@ def registrar_remocao(med) :
         }
         historico.append(remove_med) # registra a remoção no histórico
         medicamentos.remove(med)
-        print(Fore.GREEN + f"[SUCESS] {med["medicamento"].upper()} Removido com sucesso ! ")
         return True
     
     else :
