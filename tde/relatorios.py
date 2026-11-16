@@ -84,16 +84,28 @@ def retirada(med):
     return print(Fore.GREEN +f"O {med['medicamento'].upper()} foi retirado ")
 
 # FUNÇÃO PARA LISTAR O HISTÓRICO
-def listar_historico() :
-    limpar_tela() # limpa a tela do terminal
-    for i in reversed(historico) : 
-        print(Fore.GREEN +f"==================== {i['medicamento'].upper()} ({i['tipo']}) =======================\n")
-        print(f"ID : {i['id_medicamento']} \n")
-        print(f"Data : {i['data']} \n")
-        print(f"Categoria : {i['dados']['categoria']}")
-        if i['tipo'] == "ALTERAÇÃO" :
-            print(f"Campo alterado : {i['campo_alterado']} \n")
-            print(f"Valor anterior : {i['dados'][i['campo_alterado']]} \n")
+def listar_historico():
+    limpar_tela()
+
+    for i in reversed(historico):
+        print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ({i['tipo']}) =======================\n")
+
+        print(f"ID : {i['id_medicamento']}")
+        print(f"Data : {i['data']}")
+
+        match i["tipo"]:
+            case "ALTERAÇÃO":
+                campo = i["campo_alterado"]
+
+                print(f"Campo alterado : {campo}")
+                print(f"Valor anterior : {i['dados'][campo]}")
+
+            case "ENTRADA" | "SAÍDA" | "REMOÇÃO":
+                print(f"Categoria : {i['dados']['categoria']}")
+                print(f"Estoque : {i['dados']['estoque']}")
+                print(f"Preço : R$ {i['dados']['preco']:.2f}")
+
+        print("\n")
         
 # FUNÇÃO PARA DESFAZER A ULTIMA AÇÃO NO HISTÓRICO
 def desfazer_ultima():
@@ -111,9 +123,17 @@ def desfazer_ultima():
             medicamentos.append(med)
             if med["estoque"] < 15:
                 cadastrar_repo(med)
-        case "REMOÇÃO" :
+        case "REMOÇÃO":
             med = mov["dados"]
             medicamentos.append(med)
+            
+            if med["estoque"] < 15 :
+                if buscar_repo(med) is None :
+                    cadastrar_repo(med)
+            else :
+                if buscar_repo(med) is not None :
+                    cancelar_repo(med)
+                    
         case "ALTERAÇÃO" :
             dados_antigos = mov["dados"]
             for med in medicamentos :
@@ -144,11 +164,12 @@ def desfazer_ultima():
 
 # FUNÇÃO PARA REGISTRAR A REMOÇÃO/EXCLUÇÃO DE UM MEDICAMENTO 
 def registrar_remocao(med) :
-    data_de_remocao = DataDeModificacao()
     
     if not isinstance(med, dict):
         print(Fore.RED+"[ERROR] Os dados do medicamento devem estar em um dicionário.")
         return False
+    
+    data_de_remocao = DataDeModificacao()
     
     if med in medicamentos :
         remove_med = {
