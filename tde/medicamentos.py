@@ -10,7 +10,7 @@
 from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome, validar_preco)
 from collections import deque 
 from estruturas import medicamentos
-from relatorios import entrada, retirada
+from relatorios import entrada, retirada, registrar_remocao
 from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from estoque import gerar_id
 import time
@@ -289,13 +289,17 @@ def remover_medicamento(nome):
     # percorre e encontra o medicamento com o nome
     for medicamento in medicamentos:
         if medicamento["medicamento"].strip().lower() == nome:
-            medicamentos.remove(medicamento)
-            retirada(medicamento) # adiciona ao histórico a saída do medicamento
-            return print(Fore.GREEN +f"[SUCESS] {nome.upper()} REMOVIDO !")  
-            if buscar_repo(medicamento) is not None:
-                cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
+                
+            if registrar_remocao(medicamento) : # remove o medicamento 
+                
+                if buscar_repo(medicamento) is not None:
+                    cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
+                    
+                return print(Fore.GREEN +f"[SUCESS] {nome.upper()} REMOVIDO !")  
+        
             return  # achou e removeu: sai da função
-    return print(Fore.RED +"medicamento não encontrado !")  # só chega aqui se o for terminar sem achar
+        
+    return print(Fore.RED +" [ERROR] Medicamento não encontrado !")  # só chega aqui se o for terminar sem achar
 
 # FUNÇÃO PARA ORDENAR POR PREÇO
 ## Alterar para uma ordenação própria/personalizada

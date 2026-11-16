@@ -131,9 +131,9 @@ def cadastrar_repo(med) :
 # FUNLÇAO PARA EXIBIR UMA REPOSIÇÃO JÁ ENCONTRADA
 def exibir_repo(repo):
     print(f" nome : {repo['medicamento']} \n",
-          f"id de reposição : {repo['id_repo']} \n",
-          f"criticidade : {repo['criticidade']} \n",
-          f"quantidade solicitada : {repo['quantidade_solicitada']}")
+        f"id de reposição : {repo['id_repo']} \n",
+        f"criticidade : {repo['criticidade']} \n",
+        f"quantidade solicitada : {repo['quantidade_solicitada']}")
 
 
 # FUNÇÃO PARA LISTAR AS SOLITAÇÕES

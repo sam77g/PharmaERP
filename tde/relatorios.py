@@ -11,6 +11,11 @@ from colorama import Fore, Style, init
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
 
+def DataDeModificacao() :
+    agora = datetime.now()
+    data_formatada = agora.strftime("%d/%m/%Y %H:%M") # SALVA O DIA E HORA DE ENTRADA
+    return data_formatada
+
 # MENU
 def menu_hist() :
     while True:
@@ -48,8 +53,7 @@ def menu_hist() :
 
 # FUNÇÃO DE REGISTRO DE ENTRADA NO ESTOQUE
 def entrada(med) :
-    agora = datetime.now()
-    data_formatada = agora.strftime("%d/%m/%Y %H:%M") # SALVA O DIA E HORA DE ENTRADA
+    data_formatada = DataDeModificacao()
     
     entry_med = {
         "medicamento" : med["medicamento"],
@@ -65,8 +69,8 @@ def entrada(med) :
 
 # FUNÇAO DE REGISTRO DE SAÍDA NO ESTOQUE
 def retirada(med):
-    agora = datetime.now() # pega a data 
-    data_formatada = agora.strftime("%d/%m/%Y %H:%M") # SALVA O DIA E HORA DE RETIRADA
+    
+    data_formatada = DataDeModificacao()
     out_med = {
         "medicamento": med["medicamento"],
         "id_medicamento": med["id"],
@@ -96,9 +100,39 @@ def desfazer_ultima():
     if mov["tipo"] == "ENTRADA":                # desfaz entrada = remove o medicamento
         medicamentos[:] = [m for m in medicamentos if m["id"] != mov["id_medicamento"]]
         cancelar_repo(mov["dados"])
-    else:                                       # desfaz saída = devolve o medicamento
+    elif mov["tipo"] == "SAÍDA" :                                       # desfaz saída = devolve o medicamento
         med = mov["dados"]
         medicamentos.append(med)
         if med["estoque"] < 15:
             cadastrar_repo(med)
+    else :
+        med = mov["dados"]
+        medicamentos.append(med)
+        
     print(f"Desfeito: {mov['tipo']} de {mov['medicamento']}")
+
+# FUNÇÃO PARA REGISTRAR A REMOÇÃO/EXCLUÇÃO DE UM MEDICAMENTO 
+def registrar_remocao(med) :
+    data_de_remocao = DataDeModificacao()
+    
+    if not isinstance(med, dict):
+        print(Fore.RED+"[ERROR] Os dados do medicamento devem estar em um dicionário.")
+        return False
+    
+    if med in medicamentos :
+        remove_med = {
+            "medicamento" : med["medicamento"],
+            "id_medicamento" : med["id"],
+            "categoria" : med["categoria"],
+            "dados": med.copy(),
+            "data" : data_de_remocao, # saída: dd/mm/2026 hr:min
+            "tipo" : "REMOÇÃO"
+        }
+        historico.append(remove_med) # registra a remoção no histórico
+        medicamentos.remove(med)
+        print(Fore.GREEN + f"[SUCESS] {med["medicamento"].upper()} Removido com sucesso ! ")
+        return True
+    
+    else :
+        print(Fore.RED + "[ERRO] Medicamento não encontrado para remoção ! ")
+        return False
