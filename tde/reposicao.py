@@ -41,17 +41,17 @@ def menu_repo():
                     print(f"\nNenhuma reposição pendente para '{nome}'.")
                 else:
                     exibir_repo(repo)
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX + "\nPressione ENTER para continuar...")
 
             # 2 - lista tudo que está na fila
             case 2:
                 listar_repo()
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # 3 - atende sempre a primeira da fila (FIFO)
             case 3 :
                 atender_reposicao()
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # 4 - confere se existe antes de cancelar
             case 4 :
@@ -75,6 +75,7 @@ def menu_repo():
             case 0:
                 print(" -- SAINDO DE REPOSIÇÃO --")
                 time.sleep(0.5)
+                limpar_tela()
                 break
 
             # qualquer outro número
@@ -96,7 +97,8 @@ def buscar_repo(med):
     if not nome:    # string vazia
         return None
 
-    # busca linear na fila comparando pelo nome
+    # busca linear na fila comparando pelo nome 
+    # Complexidade O(n)
     for repo in solicitacoes_reposicao:
         if repo["medicamento"].strip().lower() == nome:
             return repo

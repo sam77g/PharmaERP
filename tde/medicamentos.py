@@ -7,10 +7,10 @@
 # alterar_medicamento()
 # remover_medicamento()
 # Também terá algumas validações
-from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome, validar_preco)
+from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome, validar_preco, validar_categoria)
 from collections import deque 
 from estruturas import medicamentos
-from relatorios import entrada, retirada, registrar_remocao
+from relatorios import entrada, retirada, registrar_remocao, registrar_alteracao
 from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from estoque import gerar_id
 import time
@@ -54,7 +54,7 @@ def menu_med() :
             " [0] - Voltar \n")
         
         # VERIFICA O VALOR DIGITADO
-        op_med = ler_int("Digite sua ação :  ") # verifica se realmente é int
+        op_med = ler_int(Fore.LIGHTGREEN_EX +"Digite sua ação :  ") # verifica se realmente é int
 
         
         print("----------------------------------------")
@@ -68,7 +68,7 @@ def menu_med() :
                     print(Fore.RED + "Digite um nome válido ! \n")
                     nome = input("Digite o nome do medicamento: ").strip().lower()
                     
-                estoque = ler_int("Digite o estoque : ")
+                estoque = ler_int(Fore.LIGHTGREEN_EX +"Digite o estoque : ")
                 
                 
                 # dicionário do medicamento
@@ -99,7 +99,7 @@ def menu_med() :
                             f"{medicamento['medicamento'].upper()}!\n"
                         )
                         cadastrar_repo(medicamento)
-                    input("\nPressione ENTER para continuar...")
+                    input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 else:
                     print(Fore.RED + f"\n [ERROR] : {resultado}")
             
@@ -108,42 +108,43 @@ def menu_med() :
                 alt = input("Digite o medicamento: ") # salva o nome do medicamento
                 alterar_medicamento(alt) # redireciona para a função de alteração
                 time.sleep(1)
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             
             # REMOÇÃO DE MEDICAMENTO
             case 3 :
                 rem = input("Digite o medicamento a ser removido: ") # salva o nome do medicamento
                 remover_medicamento(rem) # redireciona para a função de remoção
                 time.sleep(1)
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # LISTA TODOS OS MEDICAMENTOS CADASTRADOS
             case 4 :
                 listar_medicamentos() # chamada da função de listagem
-                input("\nPressione ENTER para continuar...")            
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")            
             # BUSCA DE MEDICAMENTO
             case 5 :
                 busca = input("Digite o medicamento: ") # salva o nome do medicamento
                 buscar_medicamento(busca) # chamada da função de busca
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             
             # LISTAGEM/BUSCA FILTRADA
             case 6 :
                 opc_busca_categoria = categoria() # recebe o valor para filtragem
                 buscar_medicamento_cat(opc_busca_categoria) # lista pela categoria
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
 
             # LISTAGEM ORDENADA POR PREÇO
             case 7 :
                 for i in ordenar_por_preco(medicamentos): # percorre e ordena os medicamentos
                     # printa no terminal
                     print(f"{i['medicamento'].upper()} - R$ {i['preco']} (estoque: {i['estoque']})")
-                input("\nPressione ENTER para continuar...")
+                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # SAÍDA
             case 0 :
-                print(" -- SAINDO DE MEDICAMENTOS --")
+                print(Fore.LIGHTYELLOW_EX +" -- SAINDO DE MEDICAMENTOS --")
                 time.sleep(0.5)
+                limpar_tela()
                 break
             
             # VALOR INVÁLIDO 
@@ -199,7 +200,7 @@ def buscar_medicamento_cat(categoria_nome):
         return []
     
     # Printa os medicamentos com a categoria desejada
-    print( f"=========== CATEGORIA: {categoria_nome.upper()} ({len(encontrados)}) ===========\n")
+    print(Fore.LIGHTGREEN_EX + f"=========== CATEGORIA: {categoria_nome.upper()} ({len(encontrados)}) ===========\n")
     for i in encontrados: # percorre os encontrados
         print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
         print(f"quantidade : {i['estoque']} ")
@@ -240,20 +241,24 @@ def alterar_medicamento(nome) :
             print(" [1] - Categoria \n",
                 "[2] - Estoque / Quantidade \n",
                 "[3] - Preço ")
-            opcao = ler_int("O que você deseja alterar ? \n")
+            opcao = ler_int(Fore.LIGHTGREEN_EX + "O que você deseja alterar ? \n")
             match opcao :
                 case 1 :
                     print("-- Escolha a nova categoria --")
                     nova_categoria = categoria()
-                    medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
-                    time.sleep(0.5)
-                    return print(Fore.GREEN + " [SUCESS] Categoria alterada com sucesso") # printa para o usuário 
+                    if validar_categoria(nova_categoria) :
+                        registrar_alteracao(medicamento, "categoria")
+                        medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
+                        time.sleep(0.5)
+                        return print(Fore.GREEN + " [SUCESS] Categoria alterada com sucesso") # printa para o usuário 
+                    return print(Fore.RED + "[ERROR] ao alterar a categoria ! ")
                 
                 case 2 :
                     nova_quantidade = ler_int("Digite a nova quantidade : ")
                     if not validar_estoque(nova_quantidade): # valida o valor digitado
                         return print(Fore.RED + "[ERROR] Quantidade inválida!")
                     else :
+                        registrar_alteracao(medicamento, "estoque")
                         medicamento["estoque"] = nova_quantidade
                     
                     # caso esteja abaixo da quantidade mínima
@@ -270,13 +275,15 @@ def alterar_medicamento(nome) :
                     return print(Fore.GREEN +"[SUCESS] Quantidade alterada com sucesso") # printa para o usuário 
                 
                 case 3 :
+                    
                     novo_preco = ler_float(" Digite o novo preço : ")
                     if validar_preco(novo_preco) :
+                        registrar_alteracao(medicamento, "preco")
                         medicamento["preco"] = novo_preco # altera o preço do medicamento
                     else :
                         return print(Fore.RED +"\n [ERROR] PREÇO INVÁLIDO !  ")
+                    time.sleep(0.3)
                     
-                    time.sleep(0.5)
                     return print(Fore.GREEN +"\n [SUCESS] PREÇO ALTERADO COM SUCESSO ! ") # printa para o usuário 0
                 case _:
                     return print(Fore.RED + "[ERROR] Opção inválida!")
