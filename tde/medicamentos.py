@@ -54,7 +54,7 @@ def menu_med() :
             " [0] - Voltar \n")
         
         # VERIFICA O VALOR DIGITADO
-        op_med = ler_int(Fore.LIGHTGREEN_EX +"Digite sua ação :  ") # verifica se realmente é int
+        op_med = ler_int(Fore.LIGHTGREEN_EX + "Digite sua ação :  ") # verifica se realmente é int
 
         
         print("----------------------------------------")
@@ -68,7 +68,7 @@ def menu_med() :
                     print(Fore.RED + "Digite um nome válido ! \n")
                     nome = input("Digite o nome do medicamento: ").strip().lower()
                     
-                estoque = ler_int(Fore.LIGHTGREEN_EX +"Digite o estoque : ")
+                estoque = ler_int("Digite o estoque : ")
                 
                 
                 # dicionário do medicamento
@@ -105,8 +105,13 @@ def menu_med() :
             
             # ALTERAÇÃO DE MEDICAMENTO
             case 2 :
-                alt = input("Digite o medicamento: ") # salva o nome do medicamento
-                alterar_medicamento(alt) # redireciona para a função de alteração
+                if len(medicamentos) == 1 :
+                    nome = medicamentos[0]["medicamento"]
+                    alterar_medicamento(nome)
+                else :
+                    alt = input("Digite o medicamento: ") # salva o nome do medicamento
+                    alterar_medicamento(alt) # redireciona para a função de alteração
+                
                 time.sleep(1)
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             
@@ -235,13 +240,14 @@ def buscar_medicamento(nome):
 # função de alterar características do medicamento através do nome digitado
 def alterar_medicamento(nome) :
     nome = nome.strip().lower() # normalizando o nome
+        
     for medicamento in medicamentos: # percorre a lista de medicamentos
         if medicamento["medicamento"].strip().lower() == nome: # verifica se o nome digitado está presente na lista
             print(f" ----- ALTERAR {nome.upper()} ----- ")
             print(" [1] - Categoria \n",
                 "[2] - Estoque / Quantidade \n",
                 "[3] - Preço ")
-            opcao = ler_int(Fore.LIGHTGREEN_EX + "O que você deseja alterar ? \n")
+            opcao = ler_int("O que você deseja alterar ? ")
             match opcao :
                 case 1 :
                     print("-- Escolha a nova categoria --")
@@ -265,7 +271,6 @@ def alterar_medicamento(nome) :
                     if nova_quantidade < 15 :
                         print(Fore.RED +"---- Quantidade abaixo do estoque mínimo ! ---")
                         if buscar_repo(medicamento) is None : # caso já exista um pedido de reposição 
-                            print(Fore.LIGHTRED_EX + "Criando pedido de reposição ... ")
                             cadastrar_repo(medicamento) # cria um novo pedido de reposição
                             time.sleep(0.5) # espera 0.5 segundos
                     elif buscar_repo(medicamento) is not None: # caso a quantidade for maior e ele estiver para repor

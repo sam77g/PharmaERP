@@ -132,7 +132,7 @@ def cadastrar_repo(med) :
 
 # FUNLÇAO PARA EXIBIR UMA REPOSIÇÃO JÁ ENCONTRADA
 def exibir_repo(repo):
-    print(Fore.LIGHTGREEN_EX +f"===== REPOSIÇÃO PARA {repo['medicamento']}")
+    print(Fore.LIGHTGREEN_EX +f" ===== REPOSIÇÃO PARA {repo['medicamento'].upper()} =====")
     print(f" nome : {repo['medicamento']} \n",
         f"id de reposição : {repo['id_repo']} \n",
         f"criticidade : {repo['criticidade']} \n",

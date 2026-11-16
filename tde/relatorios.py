@@ -29,7 +29,7 @@ def menu_hist() :
                 " [0] - Voltar \n"
             )
         try :
-            opcao = int(input(Fore.LIGHTGREEN_EX + f"Digite a opçao desejada : "))
+            opcao = int(input(Fore.LIGHTGREEN_EX + f"Digite a opçao desejada : " + Fore.BLUE))
         except ValueError :
             print("Digite apenas números!")
             time.sleep(1)
