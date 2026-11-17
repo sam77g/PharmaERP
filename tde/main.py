@@ -47,7 +47,7 @@ while True:
         " [0] - Sair \n"
     )
     print(Fore.YELLOW  + "=================================================== \n")
-    opcao = ler_int("[OPÇÃO] : ")
+    opcao = ler_int(Fore.LIGHTGREEN_EX +"[OPÇÃO] : " + Fore.BLUE)
 
     # MATCH CASE PARA A OPÇÃO DIGITADA
     match opcao:
