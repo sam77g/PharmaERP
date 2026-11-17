@@ -207,3 +207,25 @@ def registrar_alteracao(med, tipo) :
 
         historico.append(update_med) # registra a alteração no histórico
         return True
+    
+    
+# FUNÇÃO PARA SALVAR NO "CACHE" A ALTERAÇÃO 
+def registrar_reposicao(med, tipo) :
+    
+    if not isinstance(med, dict):
+        print(Fore.RED+"[ERROR] Os dados do medicamento devem estar em um dicionário.")
+        return False
+    
+    if med in medicamentos :
+        update_repo = {
+            "medicamento" : med["medicamento"],
+            "id_medicamento" : med["id"],
+            "campo_alterado": tipo,
+            "dados": med.copy(),
+            "data" : DataDeModificacao(), # saída: dd/mm/2026 hr:min
+            "quantidade_recebida" : quantidade_recebida,
+            "tipo" : "REPOSIÇÃO"
+        }
+
+        historico.append(update_repo) # registra a alteração no histórico
+        return True

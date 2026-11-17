@@ -117,9 +117,14 @@ def menu_med() :
             
             # REMOÇÃO DE MEDICAMENTO
             case 3 :
-                rem = input("Digite o medicamento a ser removido: ") # salva o nome do medicamento
-                remover_medicamento(rem) # redireciona para a função de remoção
-                time.sleep(1)
+                if len(medicamentos) == 1 :
+                    nome = medicamentos[0]["medicamento"]
+                    remover_medicamento(nome) # redireciona para a função de remoção
+                else :
+                    rem = input("Digite o medicamento a ser removido: ") # salva o nome do medicamento
+                    remover_medicamento(rem) # redireciona para a função de remoção
+                    time.sleep(1)
+                    
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # LISTA TODOS OS MEDICAMENTOS CADASTRADOS
@@ -128,8 +133,13 @@ def menu_med() :
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")            
             # BUSCA DE MEDICAMENTO
             case 5 :
-                busca = input("Digite o medicamento: ") # salva o nome do medicamento
-                buscar_medicamento(busca) # chamada da função de busca
+                if len(medicamentos) == 1 :
+                    nome = medicamentos[0]["medicamento"]
+                    buscar_medicamento(nome) # chamada da função de busca
+                else :
+                    busca = input("Digite o medicamento: ") # salva o nome do medicamento
+                    buscar_medicamento(busca) # chamada da função de busca
+                    
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             
             # LISTAGEM/BUSCA FILTRADA
@@ -143,6 +153,7 @@ def menu_med() :
                 for i in ordenar_por_preco(medicamentos): # percorre e ordena os medicamentos
                     # printa no terminal
                     print(f"{i['medicamento'].upper()} - R$ {i['preco']} (estoque: {i['estoque']})")
+                    
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # SAÍDA

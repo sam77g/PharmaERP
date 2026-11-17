@@ -6,6 +6,7 @@ from colorama import Fore, Style, init
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
+
 # LER FLOATS
 def ler_float(msg):
     
@@ -119,6 +120,7 @@ def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) :
         "id"
     ]
 
+    # PERCORRE O ARRAY PARA VERIFICAR SE HÁ ALGUM CAMPO VAZIO
     for campo in campos_obrigatorios: 
         if campo not in medicamento :
             return Fore.RED +f"[ERROR] o campo obrigatório '{campo}' está ausente."
@@ -141,6 +143,7 @@ def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) :
         return Fore.RED +"[ERROR] ID inválido ou já cadastrado."
     return True
 
+# FUNÇÃO PARA VALIDAR A CATEGORIA
 def validar_categoria(categoria):
     categorias_validas = [
         "ÉTICO",
@@ -158,5 +161,4 @@ def validar_categoria(categoria):
         return False
     
     return True
-            
-    
+

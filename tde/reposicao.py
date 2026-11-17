@@ -86,6 +86,10 @@ def menu_repo():
 
 # FUNÇÃO DE BUSCA 
 # aceita o dicionário do medicamento OU só o nome (str); nunca imprime, nunca quebra
+"""COMPLEXIDADE 
+    - O(n) no pior caso
+    - O(1) no melhor caso
+"""
 def buscar_repo(med):
     if med is None:
         return None
@@ -106,6 +110,11 @@ def buscar_repo(med):
     return None
 
 # FUNÇÃO DE CADASTRAR REPOSIÇÃO 
+"""
+    COMPLEXIDADE 
+    - O(n) no pior caso
+    - O(n) no melhor caso
+"""
 def cadastrar_repo(med) :
     # pega o ID e nome do remédio 
 
@@ -140,6 +149,11 @@ def exibir_repo(repo):
 
 
 # FUNÇÃO PARA LISTAR AS SOLITAÇÕES
+"""
+    COMPLEXIDADE 
+    - O(n) no pior caso
+    - O(n) no melhor caso
+"""
 def listar_repo():
     print(Fore.LIGHTGREEN_EX + "=========================== SOLICITAÇÕES DE REPOSIÇÃO ================================== \n")
     if not solicitacoes_reposicao:   # fila vazia
@@ -151,6 +165,9 @@ def listar_repo():
         
 # função auxiliar 
 # define o nível de acordo com o estoque atual
+"""
+    COMPLEXIDADE O(1)
+"""
 def criticidade(estoque):
     if estoque < 5:
         return "CRÍTICO"
@@ -160,6 +177,11 @@ def criticidade(estoque):
         
 # FUNÇÃO PARA A REMOÇÃO DE SOLITAÇÃO
 # também aceita dict ou nome, igual a buscar_repo
+"""
+    COMPLEXIDADE 
+    - O(n) no pior caso
+    - O(1) no melhor caso
+"""
 def cancelar_repo(med):
     nome = med["medicamento"] if isinstance(med, dict) else med
     nome = str(nome).strip().lower()
@@ -172,6 +194,11 @@ def cancelar_repo(med):
             
             
 # ATENDE A PRIMEIRA REPOSIÇÃO DA FILA
+"""
+    COMPLEXIDADE 
+    - O(m+1) no pior caso, m = quantidade de medicamentos cadastrados.
+    - O(1) no melhor caso
+"""
 def atender_reposicao():
     if not solicitacoes_reposicao:
         print("Fila vazia.")
@@ -186,7 +213,7 @@ def atender_reposicao():
     except ValueError:
         print("Digite apenas números!")
         return
-    if not validar_estoque(qtd) or qtd == 0:
+    if not validar_estoque(qtd) :
         print("Quantidade inválida.")
         return
 
@@ -211,6 +238,11 @@ def atender_reposicao():
         cadastrar_repo(med)
             
 # ALTERA A QUANTIDADE SOLICITADA DE UMA REPOSIÇÃO
+"""
+    COMPLEXIDADE 
+    - O(n) no pior caso
+    - O(1) no melhor caso
+"""
 def alterar_repo(nome):
     repo = buscar_repo(nome)
     if repo is None:
@@ -219,7 +251,7 @@ def alterar_repo(nome):
         qtd = int(input("Nova quantidade solicitada : "))
     except ValueError:
         print("Digite apenas números!"); return
-    if qtd <= 0:    # não aceita 0 nem negativo
+    if not validar_estoque(qtd) :    # não aceita 0 nem negativo
         print("A quantidade deve ser maior que 0."); return
     repo["quantidade_solicitada"] = qtd   # repo é a referência da fila, então já atualiza lá
     print("Quantidade solicitada alterada!")
@@ -228,6 +260,11 @@ def alterar_repo(nome):
 PRIORIDADE = {"CRÍTICO": 0, "ALERTA": 1, "AVISO": 2}
 
 # insere já na posição certa; empate vai depois dos que já estavam (FIFO)
+"""
+    COMPLEXIDADE 
+    - O(n) no pior caso
+    - O(1) no melhor caso
+"""
 def inserir_por_prioridade(repo):
     p = PRIORIDADE[repo["criticidade"]]
     pos = len(solicitacoes_reposicao)          # padrão: fim da fila
