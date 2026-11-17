@@ -74,6 +74,14 @@ def listar_historico():
                 print(f"Categoria : {i['dados']['categoria']}")
                 print(f"Estoque : {i['dados']['estoque']}")
                 print(f"Preço : R$ {i['dados']['preco']:.2f}")
+            
+            case "REPOSIÇÃO":
+                estoque_anterior = i["dados"]["estoque"]
+                quantidade = i["quantidade_recebida"]
+
+                print(f"Estoque anterior : {estoque_anterior}")
+                print(f"Quantidade recebida : {quantidade}")
+                print(f"Estoque posterior : {estoque_anterior + quantidade}")
 
         print("\n")
         
@@ -124,8 +132,6 @@ def desfazer_ultima():
                             else :
                                 if buscar_repo(med) is not None :
                                     cancelar_repo(med)
-                                    
-                            
                         case _ :
                             print(Fore.RED+"[ERRO] 400 ")
                     break
