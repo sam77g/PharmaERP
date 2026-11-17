@@ -135,6 +135,29 @@ def desfazer_ultima():
                         case _ :
                             print(Fore.RED+"[ERRO] 400 ")
                     break
+        case "REPOSIÇÃO":
+            med = None
+
+            # Localiza o medicamento pelo ID
+            for m in medicamentos:
+                if m["id"] == mov["id_medicamento"]:
+                    med = m
+                    break
+
+            if med is None:
+                print(Fore.RED + "Medicamento não encontrado.")
+                return
+
+            # Recupera o estoque anterior à reposição
+            med["estoque"] = mov["dados"]["estoque"]
+
+            # Reconstrói a solicitação de reposição, se necessário
+            if med["estoque"] < 15:
+                if buscar_repo(med) is None:
+                    cadastrar_repo(med)
+            else:
+                if buscar_repo(med) is not None:
+                    cancelar_repo(med)
         
     print(f"Desfeito: {mov['tipo']} de {mov['medicamento']}")
 
