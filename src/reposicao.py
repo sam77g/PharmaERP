@@ -140,18 +140,24 @@ def cadastrar_repo(med) :
     # INSERE A PRIORIDADE
     inserir_por_prioridade(repor) 
     print(Fore.LIGHTGREEN_EX +" ===== CRIANDO REPOSIÇÃO ===== ")
-    print(f" medicamento : {repor["medicamento"].upper()}")
-    print(f"criticidade : {repor["criticidade"]} ")
-    print(f"ID de reposição : {repor["id_repo"]} \n")
+    print(f" Medicamento : {repor["medicamento"].upper()}")
+    match repor["criticidade"] :
+        case "CRÍTICO" :
+            print(Fore.RED + f" Criticidade : {repor['criticidade']} \n")
+        case "ALERTA" :
+            print(Fore.LIGHTRED_EX + f" Criticidade : {repor['criticidade']} \n")
+        case "AVISO" :
+            print(Fore.YELLOW + f" Criticidade : {repor['criticidade']} \n")
+
 
 
 # FUNLÇAO PARA EXIBIR UMA REPOSIÇÃO JÁ ENCONTRADA
 def exibir_repo(repo):
     print(Fore.LIGHTGREEN_EX +f" ===== REPOSIÇÃO PARA {repo['medicamento'].upper()} =====")
-    print(f" nome : {repo['medicamento']} \n",
-        f"id de reposição : {repo['id_repo']} \n"
-        f"quantidade solicitada : {repo['quantidade_solicitada']} \n")
-    match repo["crtiticidade"] :
+    print(f"nome : {repo['medicamento']} ")
+    print(f"id de reposição : {repo['id_repo']}")
+    print(f"quantidade solicitada : {repo['quantidade_solicitada']} ")
+    match repo["criticidade"] :
         case "CRÍTICO" :
             print(Fore.RED + f"criticidade : {repo['criticidade']} \n")
         case "ALERTA" :

@@ -12,18 +12,18 @@ from colorama import Fore, Style, init
 init(autoreset=True)
 
 # Gera a arte do texto
-texto_art = pyfiglet.figlet_format("\nPharmaERP", font="rozzo")
+texto_art = pyfiglet.figlet_format("PharmaERP", font="rozzo")
 
 # Imprime o título em verde brilhante
 print(Fore.GREEN + Style.BRIGHT + texto_art)
 
 # Subtítulo e descrições
-print(Fore.YELLOW + "Sistema de controle farmaceutico\n")
+print(Fore.YELLOW + "Sistema de controle farmaceutico")
 print(
 Fore.GREEN
     + "Samuel , Samoel , Marcos & Gabriel "
     + Fore.WHITE
-    + "| "
+    + " | "
     + Fore.MAGENTA
     + " TDE Estrutura de Dados \n"
 )
