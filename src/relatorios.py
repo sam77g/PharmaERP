@@ -90,7 +90,7 @@ def desfazer_ultima():
     if not historico:
         print(Fore.LIGHTRED_EX +"Nada para desfazer.")
         return
-    mov = historico.pop()
+    mov = historico[-1]
     
     match mov["tipo"] :
         case "ENTRADA" :
@@ -158,6 +158,6 @@ def desfazer_ultima():
             else:
                 if buscar_repo(med) is not None:
                     cancelar_repo(med)
-        
+    historico.pop()        
     print(f"Desfeito: {mov['tipo']} de {mov['medicamento']}")
 

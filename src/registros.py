@@ -15,24 +15,25 @@ def DataDeModificacao() :
 
 
 # FUNÇÃO PARA SALVAR NO "CACHE" A ALTERAÇÃO 
-def registrar_reposicao(med, quantidade_recebida) :
-    
+def registrar_reposicao(med, quantidade_recebida):
     if not isinstance(med, dict):
-        print(Fore.RED+"[ERROR] Os dados do medicamento devem estar em um dicionário.")
+        print(Fore.RED + "[ERROR] Os dados do medicamento devem estar em um dicionário.")
         return False
-    
-    if med in medicamentos :
-        update_repo = {
-            "medicamento" : med["medicamento"],
-            "id_medicamento" : med["id"],
-            "dados": med.copy(),
-            "data" : DataDeModificacao(), # saída: dd/mm/2026 hr:min
-            "quantidade_recebida" : quantidade_recebida,
-            "tipo" : "REPOSIÇÃO"
-        }
 
-        historico.append(update_repo) # registra a alteração no histórico
-        return True
+    if med not in medicamentos:
+        return False
+
+    update_repo = {
+        "medicamento": med["medicamento"],
+        "id_medicamento": med["id"],
+        "dados": med.copy(),
+        "data": DataDeModificacao(),
+        "quantidade_recebida": quantidade_recebida,
+        "tipo": "REPOSIÇÃO"
+    }
+
+    historico.append(update_repo)
+    return True
     
 
 # FUNÇÃO PARA REGISTRAR A REMOÇÃO/EXCLUÇÃO DE UM MEDICAMENTO 

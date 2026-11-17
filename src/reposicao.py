@@ -149,9 +149,15 @@ def cadastrar_repo(med) :
 def exibir_repo(repo):
     print(Fore.LIGHTGREEN_EX +f" ===== REPOSIÇÃO PARA {repo['medicamento'].upper()} =====")
     print(f" nome : {repo['medicamento']} \n",
-        f"id de reposição : {repo['id_repo']} \n",
-        f"criticidade : {repo['criticidade']} \n",
+        f"id de reposição : {repo['id_repo']} \n"
         f"quantidade solicitada : {repo['quantidade_solicitada']} \n")
+    match repo["crtiticidade"] :
+        case "CRÍTICO" :
+            print(Fore.RED + f"criticidade : {repo['criticidade']} \n")
+        case "ALERTA" :
+            print(Fore.LIGHTRED_EX + f"criticidade : {repo['criticidade']} \n")
+        case "AVISO" :
+            print(Fore.YELLOW + f"criticidade : {repo['criticidade']} \n")
 
 
 # FUNÇÃO PARA LISTAR AS SOLITAÇÕES
@@ -229,8 +235,14 @@ def atender_reposicao():
         if m["id"] == repo["id_medicamento"]:
             med = m
             break
+    
+    if not registrar_reposicao(med, qtd):
+        print("Não foi possível registrar a reposição.")
+    return
 
     solicitacoes_reposicao.popleft()
+    med["estoque"] += qtd
+    
     
     # caso o remédio tenha sido excluído enquanto estava na fila
     if med is None:
@@ -238,7 +250,6 @@ def atender_reposicao():
         return
 
     registrar_reposicao(med, qtd)
-    med["estoque"] += qtd   # soma o que chegou no estoque
     
     
     print(f"{med['medicamento'].upper()}: estoque agora é {med['estoque']}")
