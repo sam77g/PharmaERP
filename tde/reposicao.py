@@ -1,8 +1,10 @@
+# ARQUIVO EXCLUSIVO PARA AS REPOSIÇÕES reposicao.py 
 # =========== IMPORTS ===========
 from validar import validar_estoque
 from collections import deque
 from estoque import gerar_id, gerar_id_repo
 from estruturas import solicitacoes_reposicao, limpar_tela, medicamentos 
+from registros import registrar_reposicao
 import time
 import pyfiglet
 from colorama import Fore, Style, init
@@ -35,12 +37,15 @@ def menu_repo():
         match op_repo:
             # 1 - busca pelo nome e mostra se existir
             case 1 :
-                nome = input("Digite o nome do medicamento : ")
-                repo = buscar_repo(nome)
-                if repo is None:
-                    print(f"\nNenhuma reposição pendente para '{nome}'.")
-                else:
-                    exibir_repo(repo)
+                if len(solicitacoes_reposicao) == 1 :
+                    buscar_repo(solicitacoes_reposicao[0]["medicamento"])
+                else :
+                    nome = input("Digite o nome do medicamento : ")
+                    repo = buscar_repo(nome)
+                    if repo is None:
+                        print(f"\nNenhuma reposição pendente para '{nome}'.")
+                    else:
+                        exibir_repo(repo)
                 input(Fore.LIGHTGREEN_EX + "\nPressione ENTER para continuar...")
 
             # 2 - lista tudo que está na fila
@@ -55,6 +60,7 @@ def menu_repo():
                 
             # 4 - confere se existe antes de cancelar
             case 4 :
+                
                 nome = input("Digite o nome do medicamento : ")
                 repo = buscar_repo(nome)
                 if repo is None:
@@ -219,18 +225,22 @@ def atender_reposicao():
 
     # procura o medicamento no cadastro pelo id
     med = None
-    for m in medicamentos:                      # busca linear na lista de cadastro
+    for m in medicamentos:                      # busca linear na lista de cadastro O(n)
         if m["id"] == repo["id_medicamento"]:
             med = m
             break
-    solicitacoes_reposicao.popleft()
 
+    solicitacoes_reposicao.popleft()
+    
     # caso o remédio tenha sido excluído enquanto estava na fila
     if med is None:
         print("Medicamento não existe mais; solicitação descartada.")
         return
 
+    registrar_reposicao(med, qtd)
     med["estoque"] += qtd   # soma o que chegou no estoque
+    
+    
     print(f"{med['medicamento'].upper()}: estoque agora é {med['estoque']}")
 
     if med["estoque"] < 15:                     # continua baixo: volta pro fim da fila

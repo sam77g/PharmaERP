@@ -10,7 +10,7 @@
 from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome, validar_preco, validar_categoria)
 from collections import deque 
 from estruturas import medicamentos
-from relatorios import entrada, retirada, registrar_remocao, registrar_alteracao
+from registros import entrada, retirada, registrar_remocao, registrar_alteracao
 from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from estoque import gerar_id
 import time
