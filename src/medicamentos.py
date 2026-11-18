@@ -190,21 +190,25 @@ def listar_medicamentos() :
 """ 
 Complexidade 
 - O(n) no pior caso
-- O(1) no melhor caso
+- O(n) no melhor caso
 """
 def buscar_medicamento_cat(categoria_nome):
     # filtra todos os medicamentos da mesma categoria
     # Equivale a :
-    # encontrados = []
-    # for m in medicamentos:
-    #     if m["categoria"].strip().lower() == categoria_nome.strip().lower():
-    #         encontrados.append(m)
-    encontrados = [
-        # percorre a lista de medicamentos 
-        m for m in medicamentos 
-        # e guarda os correspondedes em uma lista nova
-        if m["categoria"].strip().lower() == categoria_nome.strip().lower()
-    ]
+    # encontrados = [
+    #     # percorre a lista de medicamentos 
+    #     m for m in medicamentos 
+    #     # e guarda os correspondedes em uma lista nova
+    #     if m["categoria"].strip().lower() == categoria_nome.strip().lower()
+    # ]
+    
+    categoria_nome = categoria_nome.strip().lower()
+
+    encontrados = []
+
+    for m in medicamentos:
+        if m["categoria"].strip().lower() == categoria_nome:
+            encontrados.append(m)
 
     # Se não houver nenhum medicamento com a categoria correspondente
     if not encontrados:
@@ -227,7 +231,7 @@ def buscar_medicamento_cat(categoria_nome):
 # O(n) no pior caso
 def buscar_medicamento(nome):
     
-    nome = nome.strip().lower
+    nome = nome.strip().lower()
     
     if len(medicamentos) == 0 :
         print(Fore.RED + " LISTA VAZIA, IMPOSSÍVEL BUSCAR ! \n")
@@ -235,13 +239,14 @@ def buscar_medicamento(nome):
         print(Fore.RED + " NOME VAZIO ! ")
     else : 
         for i in medicamentos :
-            if i["medicamento"].strip().lower == nome: # compara os nomes 
+            if i["medicamento"].strip().lower() == nome: # compara os nomes 
                 print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
                 print(f"quantidade : {i['estoque']} " )  
                 print(f"preço : {i['preco']} ")
                 print(f"ID : {i['id']} \n")
                 return i
-        return print(Fore.RED + "MEDICAMENTO NÃO ENCONTRADO ! ")
+        print(Fore.RED + "MEDICAMENTO NÃO ENCONTRADO ! ")
+        return None
 
     
 # função de alterar características do medicamento através do nome digitado
