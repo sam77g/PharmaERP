@@ -261,22 +261,26 @@ def alterar_medicamento(nome) :
                 "[3] - Preço ")
             opcao = ler_int("O que você deseja alterar ? ")
             match opcao :
+                
+                # ALTERAR CATEGORIA
                 case 1 :
                     print("-- Escolha a nova categoria --")
                     nova_categoria = categoria()
                     if validar_categoria(nova_categoria) :
-                        registrar_alteracao(medicamento, "categoria")
-                        medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
-                        time.sleep(0.5)
-                        return print(Fore.GREEN + " [SUCESS] Categoria alterada com sucesso") # printa para o usuário 
+                        
+                        if registrar_alteracao(medicamento, "categoria") :
+                            medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
+                            time.sleep(0.5)
+                            return print(Fore.GREEN + " [SUCESS] Categoria alterada com sucesso") # printa para o usuário 
+                        
                     return print(Fore.RED + "[ERROR] ao alterar a categoria ! ")
                 
+                # ALTERAR ESTOQUE
                 case 2 :
                     nova_quantidade = ler_int("Digite a nova quantidade : ")
                     if not validar_estoque(nova_quantidade): # valida o valor digitado
                         return print(Fore.RED + "[ERROR] Quantidade inválida!")
-                    else :
-                        registrar_alteracao(medicamento, "estoque")
+                    elif registrar_alteracao(medicamento, "estoque") :
                         medicamento["estoque"] = nova_quantidade
                     
                     # caso esteja abaixo da quantidade mínima
@@ -291,17 +295,21 @@ def alterar_medicamento(nome) :
                     
                     return print(Fore.GREEN +"[SUCESS] Quantidade alterada com sucesso") # printa para o usuário 
                 
+                # ALTERAR PREÇO
                 case 3 :
                     
                     novo_preco = ler_float(" Digite o novo preço : ")
                     if validar_preco(novo_preco) :
-                        registrar_alteracao(medicamento, "preco")
-                        medicamento["preco"] = novo_preco # altera o preço do medicamento
+                        if registrar_alteracao(medicamento, "preco") :
+                            medicamento["preco"] = novo_preco # altera o preço do medicamento
                     else :
                         return print(Fore.RED +"\n [ERROR] PREÇO INVÁLIDO !  ")
+                    
                     time.sleep(0.3)
                     
                     return print(Fore.GREEN +"\n [SUCESS] PREÇO ALTERADO COM SUCESSO ! ") # printa para o usuário 0
+                
+                # OPÇÃO INVÁLIDA
                 case _:
                     return print(Fore.RED + "[ERROR] Opção inválida!")
                 
