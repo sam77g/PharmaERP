@@ -21,21 +21,6 @@ from colorama import Fore, Style, init
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
 
-# FUNÇÃO PARA LIMPAR TELA
-def limpar_tela():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-# FUNÇÃO PARA CATEGORIAS
-def categoria() :
-    print("[1] - Ético ")
-    print("[2] - Genérico")
-    print("[3] - Similar \n")
-    while True:
-        op = ler_int("Digite a categoria [1, 2 ou 3] : ")
-        if op == 1: return "Ético"
-        if op == 2: return "Genérico"
-        if op == 3: return "Similar"
-        print("Opção inválida! Escolha 1, 2 ou 3.")
 
 # MENU DE MEDICAMENTOS
 def menu_med() :
@@ -162,35 +147,44 @@ def menu_med() :
             # VALOR INVÁLIDO 
             case _ :
                 print(Fore.RED + " \n [ERROR] VALOR INVÁLIDO !")
-                
-                    
+
+
+# FUNÇÃO PARA LIMPAR TELA
+def limpar_tela():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# FUNÇÃO PARA CATEGORIAS
+def categoria() :
+    print("[1] - Ético ")
+    print("[2] - Genérico")
+    print("[3] - Similar \n")
+    while True:
+        op = ler_int("Digite a categoria [1, 2 ou 3] : ")
+        if op == 1: return "Ético"
+        if op == 2: return "Genérico"
+        if op == 3: return "Similar"
+        print("Opção inválida! Escolha 1, 2 ou 3.")
 
 # FUNÇAO DE CADASTRO DE MEDICAMENTOS
 def cadastrar_medicamento(med) :
     medicamentos.append(med) # adiciona o medicamento a lista
     entrada(med) # REGISTRA A ENTRADA
-    print(Fore.GREEN + " \n [SUCESS] : Medicamento cadastrado com sucesso ")
+    return True
 
 
 # FUNÇAO DE LISTAR TODOS OS MEDICAMENTOS
 def listar_medicamentos() :
     
     if len(medicamentos) == 0 : 
-        print(Fore.RED +" NENHUM MEDICAMENTO CADASTRADO ! ")
+        return False
     else :
-        for i in medicamentos :
-            print(Fore.GREEN + f"==================== {i["medicamento"].upper()} ======================= \n")
-            print(f"quantidade : {i['estoque']} " )  
-            print(f"preço : {i["preco"]} ")
-            print(f"categoria : {i['categoria']} \n")
+        return True
         
 
 
 # FUNÇÃO DE BUSCAR MEDICAMENTOS POR CATEGORIA
 """ 
-Complexidade 
-- O(n) no pior caso
-- O(n) no melhor caso
+Complexidade O(n)
 """
 def buscar_medicamento_cat(categoria_nome):
     # filtra todos os medicamentos da mesma categoria
@@ -202,26 +196,15 @@ def buscar_medicamento_cat(categoria_nome):
     #     if m["categoria"].strip().lower() == categoria_nome.strip().lower()
     # ]
     
-    categoria_nome = categoria_nome.strip().lower()
+    if not isinstance(categoria_nome, str): # valida
+        return []
 
+    categoria_nome = categoria_nome.strip().lower()
     encontrados = []
 
-    for m in medicamentos:
-        if m["categoria"].strip().lower() == categoria_nome:
-            encontrados.append(m)
-
-    # Se não houver nenhum medicamento com a categoria correspondente
-    if not encontrados:
-        print(Fore.RED + f"Nenhum medicamento cadastrado na categoria {categoria_nome}.")
-        return []
-    
-    # Printa os medicamentos com a categoria desejada
-    print(Fore.LIGHTGREEN_EX + f"=========== CATEGORIA: {categoria_nome.upper()} ({len(encontrados)}) ===========\n")
-    for i in encontrados: # percorre os encontrados
-        print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
-        print(f"quantidade : {i['estoque']} ")
-        print(f"preço : {i['preco']} ")
-        print(f"ID : {i['id']} \n")
+    for medicamento in medicamentos: # busca
+        if medicamento["categoria"].strip().lower() == categoria_nome: # compara
+            encontrados.append(medicamento) # adiciona na lista
 
     return encontrados
 
@@ -230,23 +213,16 @@ def buscar_medicamento_cat(categoria_nome):
 # O(1) no melhor caso 
 # O(n) no pior caso
 def buscar_medicamento(nome):
-    
-    nome = nome.strip().lower()
-    
-    if len(medicamentos) == 0 :
-        print(Fore.RED + " LISTA VAZIA, IMPOSSÍVEL BUSCAR ! \n")
-    elif nome == '' :
-        print(Fore.RED + " NOME VAZIO ! ")
-    else : 
-        for i in medicamentos :
-            if i["medicamento"].strip().lower() == nome: # compara os nomes 
-                print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ======================= \n")
-                print(f"quantidade : {i['estoque']} " )  
-                print(f"preço : {i['preco']} ")
-                print(f"ID : {i['id']} \n")
-                return i
-        print(Fore.RED + "MEDICAMENTO NÃO ENCONTRADO ! ")
+    if not isinstance(nome, str) or not nome.strip():
         return None
+
+    nome = nome.strip().lower()
+
+    for medicamento in medicamentos:
+        if medicamento["medicamento"].strip().lower() == nome:
+            return medicamento
+
+    return None
 
     
 # função de alterar características do medicamento através do nome digitado
@@ -271,21 +247,23 @@ def alterar_medicamento(nome) :
                         if registrar_alteracao(medicamento, "categoria") :
                             medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
                             time.sleep(0.5)
-                            return print(Fore.GREEN + " [SUCESS] Categoria alterada com sucesso") # printa para o usuário 
+                            return True
                         
-                    return print(Fore.RED + "[ERROR] ao alterar a categoria ! ")
+                    return False
                 
                 # ALTERAR ESTOQUE
                 case 2 :
                     nova_quantidade = ler_int("Digite a nova quantidade : ")
                     if not validar_estoque(nova_quantidade): # valida o valor digitado
-                        return print(Fore.RED + "[ERROR] Quantidade inválida!")
-                    elif registrar_alteracao(medicamento, "estoque") :
-                        medicamento["estoque"] = nova_quantidade
+                        return False
+                    
+                    if not registrar_alteracao(medicamento, "estoque") :
+                        return False
+                    
+                    medicamento["estoque"] = nova_quantidade
                     
                     # caso esteja abaixo da quantidade mínima
                     if nova_quantidade < 15 :
-                        print(Fore.RED +"---- Quantidade abaixo do estoque mínimo ! ---")
                         if buscar_repo(medicamento) is None : # caso já exista um pedido de reposição 
                             cadastrar_repo(medicamento) # cria um novo pedido de reposição
                             time.sleep(0.5) # espera 0.5 segundos
@@ -293,7 +271,7 @@ def alterar_medicamento(nome) :
                         cancelar_repo(medicamento) # retira do pedidos de reposição
                         time.sleep(0.5)
                     
-                    return print(Fore.GREEN +"[SUCESS] Quantidade alterada com sucesso") # printa para o usuário 
+                    return True
                 
                 # ALTERAR PREÇO
                 case 3 :
@@ -303,17 +281,17 @@ def alterar_medicamento(nome) :
                         if registrar_alteracao(medicamento, "preco") :
                             medicamento["preco"] = novo_preco # altera o preço do medicamento
                     else :
-                        return print(Fore.RED +"\n [ERROR] PREÇO INVÁLIDO !  ")
+                        return False
                     
                     time.sleep(0.3)
                     
-                    return print(Fore.GREEN +"\n [SUCESS] PREÇO ALTERADO COM SUCESSO ! ") # printa para o usuário 0
+                    return True
                 
                 # OPÇÃO INVÁLIDA
                 case _:
-                    return print(Fore.RED + "[ERROR] Opção inválida!")
+                    return False
                 
-    return print(Fore.RED + " [ERROR] MEDICAMENTO NÃO ENCONTRADO !")
+    return False
 
 # FUNÇÃO PARA REMOVER UM MEDICAMENTO PELO NOME
 def remover_medicamento(nome):
@@ -327,11 +305,11 @@ def remover_medicamento(nome):
                 if buscar_repo(medicamento) is not None:
                     cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
                     
-                return print(Fore.GREEN +f"[SUCESS] {nome.upper()} REMOVIDO !")  
+                return False
         
             return  # achou e removeu: sai da função
         
-    return print(Fore.RED +" [ERROR] Medicamento não encontrado !")  # só chega aqui se o for terminar sem achar
+    return False  # só chega aqui se o for terminar sem achar
 
 # FUNÇÃO PARA ORDENAR POR PREÇO
 ## Alterar para uma ordenação própria/personalizada
