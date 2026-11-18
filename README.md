@@ -4,7 +4,7 @@
 
 **Sistema de gerenciamento de medicamentos e solicitações de reposição para uma farmácia, desenvolvido em Python como projeto acadêmico de Estruturas de Dados.**
 
-![Status](https://img.shields.io/badge/status-vers%C3%A3o%20final-green)
+![Status](https://img.shields.io/badge/status-desenvolvimento-yellow)
 ![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
 ![Estruturas](https://img.shields.io/badge/estruturas-Lista%20%7C%20Pilha%20%7C%20Fila-blue)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
