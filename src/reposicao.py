@@ -37,15 +37,12 @@ def menu_repo():
         match op_repo:
             # 1 - busca pelo nome e mostra se existir
             case 1 :
-                if len(solicitacoes_reposicao) == 1 :
-                    buscar_repo(solicitacoes_reposicao[0]["medicamento"])
-                else :
-                    nome = input("Digite o nome do medicamento : ")
-                    repo = buscar_repo(nome)
-                    if repo is None:
-                        print(f"\nNenhuma reposição pendente para '{nome}'.")
-                    else:
-                        exibir_repo(repo)
+                nome = input("Digite o nome do medicamento : ")
+                repo = buscar_repo(nome)
+                if repo is None:
+                    print(f"\nNenhuma reposição pendente para '{nome}'.")
+                else:
+                    exibir_repo(repo)
                 input(Fore.LIGHTGREEN_EX + "\nPressione ENTER para continuar...")
 
             # 2 - lista tudo que está na fila

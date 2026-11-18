@@ -36,7 +36,7 @@ def ler_int(msg):
 
 # VALIDA O TEXTO DIGITADO
 def validar_texto(valor):
-
+    
     if not isinstance(valor, str):
         return False
 
