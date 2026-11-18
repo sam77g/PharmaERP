@@ -166,9 +166,12 @@ def categoria() :
         print("Opção inválida! Escolha 1, 2 ou 3.")
 
 # FUNÇAO DE CADASTRO DE MEDICAMENTOS
-def cadastrar_medicamento(med) :
-    medicamentos.append(med) # adiciona o medicamento a lista
-    entrada(med) # REGISTRA A ENTRADA
+def cadastrar_medicamento(med):
+    if validar_medicamento(med, medicamentos) is not True:
+        return False
+
+    medicamentos.append(med)
+    entrada(med)
     return True
 
 
@@ -178,7 +181,7 @@ def listar_medicamentos() :
     if len(medicamentos) == 0 : 
         return False
     else :
-        return True
+        return medicamentos
         
 
 
