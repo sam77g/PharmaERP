@@ -1,11 +1,6 @@
 # ARQUIVO COM FUNÇÕES DE VALIDAÇÃO
 
 import math # importando a biblioteca math
-import pyfiglet
-from colorama import Fore, Style, init
-
-# Inicializa o colorama (necessário para compatibilidade com Windows)
-init(autoreset=True)
 
 # LER FLOATS
 def ler_float(msg):
@@ -18,12 +13,12 @@ def ler_float(msg):
             
             # Verifica se o número é finito (rejeita inf, -inf e nan)
             if not math.isfinite(valor):
-                print(Fore.RED + "[ERROR] " + Fore.LIGHTRED_EX + " O valor inserido não é um número finito (infinito ou NaN). Tente novamente.")
+                return False
             else :
                 return valor
             
         except ValueError:
-            print(Fore.RED + " [ERROR] Digite apenas números!")
+            return False
 
 
 # LER INTEIROS
@@ -32,7 +27,7 @@ def ler_int(msg):
         try:
             return int(input(msg))
         except ValueError:
-            print(Fore.RED + " [ERROR] Digite apenas números inteiros!")
+            return False
 
 # VALIDA O TEXTO DIGITADO
 def validar_texto(valor):
@@ -109,7 +104,7 @@ def validar_nome(med_nome, lista_medicamentos, ignorar_id=None):
 def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) : 
     # Verifica se é um dicionário
     if not isinstance(medicamento, dict):
-        return Fore.RED +"Erro: os dados do medicamento devem estar em um dicionário."
+        return False
     
     # Verifica os campos obrigatórios
     campos_obrigatorios = [
@@ -123,24 +118,24 @@ def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) :
     # PERCORRE O ARRAY PARA VERIFICAR SE HÁ ALGUM CAMPO VAZIO
     for campo in campos_obrigatorios: 
         if campo not in medicamento :
-            return False, Fore.RED +f"[ERROR] o campo obrigatório '{campo}' está ausente."
+            return False
         
     # Valida o nome
     if not validar_texto(medicamento["medicamento"]):
-        return False, Fore.RED +"[ERROR] o nome do medicamento não pode estar vazio."
+        return False
     if not validar_nome(medicamento["medicamento"], lista_medicamentos, ignorar_id) :
-        return False, Fore.RED +"[ERROR] já existe um medicamento com esse nome."
+        return False
     # Valida a categoria
     if not validar_categoria(medicamento["categoria"]) :
-        return False, Fore.RED +"[ERROR]a categoria informada é inválida."
+        return False
     # Valida o estoque
     if not validar_estoque(medicamento["estoque"]):
-        return False, Fore.RED +"[ERROR] o estoque deve ser um número inteiro positivo ou zero."
+        return False
     # Valida o preço
     if not validar_preco(medicamento["preco"]):
-        return False, Fore.RED +"[ERROR] o preço deve ser um número positivo ou zero."
+        return False
     if not validar_id(medicamento["id"], lista_medicamentos, ignorar_id ) :
-        return False, Fore.RED +"[ERROR] ID inválido ou já cadastrado."
+        return False
     return True
 
 # FUNÇÃO PARA VALIDAR A CATEGORIA

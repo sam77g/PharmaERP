@@ -77,9 +77,7 @@ def menu_repo():
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             # 0 - sai do loop e volta pro menu anterior
             case 0:
-                print(Fore.LIGHTYELLOW_EX +" -- SAINDO DE REPOSIÇÃO --")
                 time.sleep(0.5)
-                limpar_tela()
                 break
 
             # qualquer outro número
