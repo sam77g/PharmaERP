@@ -123,24 +123,24 @@ def validar_medicamento(medicamento, lista_medicamentos, ignorar_id=None) :
     # PERCORRE O ARRAY PARA VERIFICAR SE HÁ ALGUM CAMPO VAZIO
     for campo in campos_obrigatorios: 
         if campo not in medicamento :
-            return Fore.RED +f"[ERROR] o campo obrigatório '{campo}' está ausente."
+            return False, Fore.RED +f"[ERROR] o campo obrigatório '{campo}' está ausente."
         
     # Valida o nome
     if not validar_texto(medicamento["medicamento"]):
-        return Fore.RED +"[ERROR] o nome do medicamento não pode estar vazio."
+        return False, Fore.RED +"[ERROR] o nome do medicamento não pode estar vazio."
     if not validar_nome(medicamento["medicamento"], lista_medicamentos, ignorar_id) :
-        return Fore.RED +"[ERROR] já existe um medicamento com esse nome."
+        return False, Fore.RED +"[ERROR] já existe um medicamento com esse nome."
     # Valida a categoria
     if not validar_categoria(medicamento["categoria"]) :
-        return Fore.RED +"[ERROR]a categoria informada é inválida."
+        return False, Fore.RED +"[ERROR]a categoria informada é inválida."
     # Valida o estoque
     if not validar_estoque(medicamento["estoque"]):
-        return Fore.RED +"[ERROR] o estoque deve ser um número inteiro positivo ou zero."
+        return False, Fore.RED +"[ERROR] o estoque deve ser um número inteiro positivo ou zero."
     # Valida o preço
     if not validar_preco(medicamento["preco"]):
-        return Fore.RED +"[ERROR] o preço deve ser um número positivo ou zero."
+        return False, Fore.RED +"[ERROR] o preço deve ser um número positivo ou zero."
     if not validar_id(medicamento["id"], lista_medicamentos, ignorar_id ) :
-        return Fore.RED +"[ERROR] ID inválido ou já cadastrado."
+        return False, Fore.RED +"[ERROR] ID inválido ou já cadastrado."
     return True
 
 # FUNÇÃO PARA VALIDAR A CATEGORIA
