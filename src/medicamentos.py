@@ -276,15 +276,13 @@ def alterar_medicamento(nome) :
                 # ALTERAR PREÇO
                 case 3 :
                     
-                    novo_preco = ler_float(" Digite o novo preço : ")
-                    if validar_preco(novo_preco) :
-                        if registrar_alteracao(medicamento, "preco") :
-                            medicamento["preco"] = novo_preco # altera o preço do medicamento
-                    else :
+                    if not validar_preco(novo_preco):
                         return False
-                    
-                    time.sleep(0.3)
-                    
+
+                    if not registrar_alteracao(medicamento, "preco"):
+                        return False
+
+                    medicamento["preco"] = novo_preco
                     return True
                 
                 # OPÇÃO INVÁLIDA
@@ -293,23 +291,25 @@ def alterar_medicamento(nome) :
                 
     return False
 
-# FUNÇÃO PARA REMOVER UM MEDICAMENTO PELO NOME
+
+
 def remover_medicamento(nome):
+    medicamento = buscar_medicamento(nome)
     nome = nome.strip().lower() # trata o nome para as comparações
-    # percorre e encontra o medicamento com o nome
-    for medicamento in medicamentos:
-        if medicamento["medicamento"].strip().lower() == nome:
-                
-            if registrar_remocao(medicamento) : # remove o medicamento 
-                
-                if buscar_repo(medicamento) is not None:
-                    cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
-                    
-                return False
+    
+    if medicamento is None :
+        return False
+    
+    # busca se há solicitações de reposições para o medicamento
+    if buscar_repo(nome) is not None :
+        cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
+    
+    # Registra e remove o medicamento
+    if not registrar_remocao(nome) :
+        return False
+    
         
-            return  # achou e removeu: sai da função
-        
-    return False  # só chega aqui se o for terminar sem achar
+    return True
 
 # FUNÇÃO PARA ORDENAR POR PREÇO
 ## Alterar para uma ordenação própria/personalizada
