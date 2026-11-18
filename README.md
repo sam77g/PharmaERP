@@ -1,6 +1,6 @@
 <div align="center">
 
-# PharmaERP
+# PharmaERP GUI Version
 
 **Sistema de gerenciamento de medicamentos e solicitações de reposição para uma farmácia, desenvolvido em Python como projeto acadêmico de Estruturas de Dados.**
 
