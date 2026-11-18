@@ -68,6 +68,7 @@ def menu_repo():
                 else:
                     cancelar_repo(nome)
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
+                
             # 5 - mesma lógica: só altera se a reposição existir
             case 5 :
                 nome = input("Digite o nome do medicamento : ")
@@ -217,52 +218,58 @@ def cancelar_repo(med):
     - O(m+1) no pior caso, m = quantidade de medicamentos cadastrados.
     - O(1) no melhor caso
 """
+
 def atender_reposicao():
     if not solicitacoes_reposicao:
         print("Fila vazia.")
         return
 
-    repo = solicitacoes_reposicao[0]            # só espia, não remove
+    repo = solicitacoes_reposicao[0]
     print(f"Próxima da fila: {repo['medicamento'].upper()} ({repo['criticidade']})")
 
-    # valida a quantidade ANTES de tirar da fila, assim se errar não perde a solicitação
+    # Valida a quantidade antes de retirar da fila
     try:
-        qtd = int(input("Digite a quantidade recebida : "))
+        qtd = int(input("Digite a quantidade recebida: "))
     except ValueError:
         print("Digite apenas números!")
         return
-    if not validar_estoque(qtd) :
+
+    if not validar_estoque(qtd) or qtd == 0:
         print("Quantidade inválida.")
         return
 
-    # procura o medicamento no cadastro pelo id
+    # Procura o medicamento pelo ID
     med = None
-    for m in medicamentos:                      # busca linear na lista de cadastro O(n)
+
+    for m in medicamentos:
         if m["id"] == repo["id_medicamento"]:
             med = m
             break
-    
-    if not registrar_reposicao(med, qtd):
-        print("Não foi possível registrar a reposição.")
-    return
 
-    solicitacoes_reposicao.popleft()
-    med["estoque"] += qtd
-    
-    
-    # caso o remédio tenha sido excluído enquanto estava na fila
+    # Verifica se o medicamento ainda existe
     if med is None:
+        solicitacoes_reposicao.popleft()
         print("Medicamento não existe mais; solicitação descartada.")
         return
 
-    registrar_reposicao(med, qtd)
-    
-    
+    # Registra no histórico antes de alterar o estoque
+    if not registrar_reposicao(med, qtd):
+        print("Não foi possível registrar a reposição.")
+        return
+
+    # Remove a solicitação atendida
+    solicitacoes_reposicao.popleft()
+
+    # Atualiza o estoque
+    med["estoque"] += qtd
+
     print(f"{med['medicamento'].upper()}: estoque agora é {med['estoque']}")
 
-    if med["estoque"] < 15:                     # continua baixo: volta pro fim da fila
+    # Se continuar abaixo do mínimo, cria outra solicitação
+    if med["estoque"] < 15:
         print("Ainda abaixo do mínimo; nova solicitação criada.")
         cadastrar_repo(med)
+
             
 # ALTERA A QUANTIDADE SOLICITADA DE UMA REPOSIÇÃO
 """
