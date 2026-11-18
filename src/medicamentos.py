@@ -93,11 +93,7 @@ def menu_med() :
                     # VERIFICA SE O ESTOQUE ESTÁ ABAIXO DO MÍNIMO [15]
                     if medicamento["estoque"] < 15:
                         
-                        print("\nEstoque menor que o estoque mínimo!")
-                        print(
-                            f"Criando pedido de reposição para "
-                            f"{medicamento['medicamento'].upper()}!\n"
-                        )
+                        print(Fore.RED + "\nEstoque menor que o estoque mínimo!\n")
                         cadastrar_repo(medicamento)
                     input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 else:
