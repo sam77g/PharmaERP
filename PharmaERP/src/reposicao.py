@@ -285,6 +285,22 @@ def alterar_repo(nome):
     repo["quantidade_solicitada"] = qtd   # repo é a referência da fila, então já atualiza lá
     print("Quantidade solicitada alterada!")
 
+# FUNÇÃO PARA ATUALIZAR A REPOSIÇAO
+def atualizar_repo(med):
+    repo = buscar_repo(med)
+
+    if repo is None:
+        if med["estoque"] < 15:
+            cadastrar_repo(med)
+        return
+
+    if med["estoque"] >= 15:
+        cancelar_repo(med)
+        return
+
+    cancelar_repo(med)
+    cadastrar_repo(med)
+
 # menor número = maior prioridade
 PRIORIDADE = {"CRÍTICO": 0, "ALERTA": 1, "AVISO": 2}
 

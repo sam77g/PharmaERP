@@ -11,7 +11,7 @@ from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, v
 from collections import deque 
 from estruturas import medicamentos
 from registros import entrada, retirada, registrar_remocao, registrar_alteracao
-from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
+from reposicao import cadastrar_repo, buscar_repo, cancelar_repo, atualizar_repo
 from estoque import gerar_id
 import time
 import os
@@ -262,20 +262,14 @@ def alterar_medicamento(nome) :
                     
                     medicamento["estoque"] = nova_quantidade
                     
-                    # caso esteja abaixo da quantidade mínima
-                    if nova_quantidade < 15 :
-                        if buscar_repo(medicamento) is None : # caso já exista um pedido de reposição 
-                            cadastrar_repo(medicamento) # cria um novo pedido de reposição
-                            time.sleep(0.5) # espera 0.5 segundos
-                    elif buscar_repo(medicamento) is not None: # caso a quantidade for maior e ele estiver para repor
-                        cancelar_repo(medicamento) # retira do pedidos de reposição
-                        time.sleep(0.5)
+                    # Função para verificar se há reposição e atualizar ela ou não
+                    atualizar_repo(medicamento)
                     
                     return True
                 
                 # ALTERAR PREÇO
                 case 3 :
-                    
+                    novo_preco = ler_float("Digite o novo preço: ")
                     if not validar_preco(novo_preco):
                         return False
 
@@ -300,14 +294,14 @@ def remover_medicamento(nome):
     if medicamento is None :
         return False
     
-    # busca se há solicitações de reposições para o medicamento
-    if buscar_repo(nome) is not None :
-        cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
     
     # Registra e remove o medicamento
     if not registrar_remocao(nome) :
         return False
     
+    # busca se há solicitações de reposições para o medicamento
+    if buscar_repo(medicamento) is not None :
+        cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
         
     return True
 
