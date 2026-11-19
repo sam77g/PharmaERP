@@ -150,7 +150,6 @@ def validar_categoria(categoria):
         return False
     
     categoria_limpa = categoria.strip()
-
     
     if categoria_limpa.upper() not in categorias_validas :
         return False

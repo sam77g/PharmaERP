@@ -138,16 +138,14 @@ def limpar_tela():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 # FUNÇÃO PARA CATEGORIAS
-def categoria() :
-    print("[1] - Ético ")
-    print("[2] - Genérico")
-    print("[3] - Similar \n")
+def categoria(valor) :
     while True:
-        op = ler_int("Digite a categoria [1, 2 ou 3] : ")
-        if op == 1: return "Ético"
-        if op == 2: return "Genérico"
-        if op == 3: return "Similar"
-        print("Opção inválida! Escolha 1, 2 ou 3.")
+        if ler_int(valor) :
+            op = valor
+            if op == 1: return "ÉTICO"
+            if op == 2: return "GENÉRICO"
+            if op == 3: return "SIMILAR"
+        return False
 
 # FUNÇAO DE CADASTRO DE MEDICAMENTOS
 def cadastrar_medicamento(med):
@@ -213,34 +211,28 @@ def buscar_medicamento(nome):
 
     
 # função de alterar características do medicamento através do nome digitado
-def alterar_medicamento(nome) :
+def alterar_medicamento(nome, campo, novo_valor) :
     nome = nome.strip().lower() # normalizando o nome
         
     for medicamento in medicamentos: # percorre a lista de medicamentos
         if medicamento["medicamento"].strip().lower() == nome: # verifica se o nome digitado está presente na lista
-            print(f" ----- ALTERAR {nome.upper()} ----- ")
-            print(" [1] - Categoria \n",
-                "[2] - Estoque / Quantidade \n",
-                "[3] - Preço ")
-            opcao = ler_int("O que você deseja alterar ? ")
+            opcao = campo
             match opcao :
                 
                 # ALTERAR CATEGORIA
                 case 1 :
-                    print("-- Escolha a nova categoria --")
-                    nova_categoria = categoria()
+                    nova_categoria = categoria(novo_valor)
                     if validar_categoria(nova_categoria) :
                         
                         if registrar_alteracao(medicamento, "categoria") :
                             medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
-                            time.sleep(0.5)
                             return True
                         
                     return False
                 
                 # ALTERAR ESTOQUE
                 case 2 :
-                    nova_quantidade = ler_int("Digite a nova quantidade : ")
+                    nova_quantidade = ler_int(novo_valor)
                     if not validar_estoque(nova_quantidade): # valida o valor digitado
                         return False
                     
@@ -256,7 +248,7 @@ def alterar_medicamento(nome) :
                 
                 # ALTERAR PREÇO
                 case 3 :
-                    novo_preco = ler_float("Digite o novo preço: ")
+                    novo_preco = ler_float(novo_valor)
                     if not validar_preco(novo_preco):
                         return False
 
