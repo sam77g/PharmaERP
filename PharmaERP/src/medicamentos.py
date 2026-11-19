@@ -265,7 +265,7 @@ def alterar_medicamento(nome, campo, novo_valor) :
     return False
 
 
-
+# FUNÇÃO PARA REMOVER UM MEDICAMENTO
 def remover_medicamento(nome):
     medicamento = buscar_medicamento(nome)
     nome = nome.strip().lower() # trata o nome para as comparações
