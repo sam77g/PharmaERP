@@ -8,9 +8,6 @@ from .registros import registrar_reposicao
 import time
 
 
-# Inicializa o colorama (necessário para compatibilidade com Windows)
-init(autoreset=True)
-
 # ===== MENU DE REPOSIÇÃO ====
 def menu_repo():
     while True :

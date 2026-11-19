@@ -1,7 +1,8 @@
 import tkinter as tk
-from medicamentos import menu_med
-from reposicao import menu_repo
-from relatorios import menu_hist
+from src.relatorios import menu_hist
+from src.medicamentos import menu_med
+from src.reposicao import  menu_repo
+from src.validar import ler_int
 
 def iniciar_janela():
     janela = tk.Tk()

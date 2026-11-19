@@ -20,8 +20,6 @@ from .registros import entrada, registrar_remocao, registrar_alteracao
 from .reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from .estoque import gerar_id
 
-# Inicializa o colorama (necessário para compatibilidade com Windows)
-init(autoreset=True)
 
 
 # MENU DE MEDICAMENTOS
