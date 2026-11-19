@@ -1,14 +1,5 @@
 # JANELA PRINCIPAL
 # IMPORTS
-from src.medicamentos import (
-    cadastrar_medicamento,
-    listar_medicamentos,
-    buscar_medicamento,
-    alterar_medicamento,
-    remover_medicamento
-)
-
-from src.reposicao import cadastrar_repo
 
 import tkinter as tk
 
@@ -30,4 +21,7 @@ titulo = tk.Label(
 titulo.pack(pady=20)
 
 # Mantém a aplicação aberta
-janela.mainloop()
+def iniciar_interface() :
+    janela.mainloop()
+    
+iniciar_interface()
