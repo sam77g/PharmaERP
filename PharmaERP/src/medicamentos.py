@@ -7,16 +7,18 @@
 # alterar_medicamento()
 # remover_medicamento()
 # Também terá algumas validações
-from validar import (validar_medicamento, validar_estoque, ler_int, ler_float, validar_nome, validar_preco, validar_categoria)
-from collections import deque 
+from validar import (
+    validar_medicamento,
+    validar_estoque,
+    validar_nome,
+    validar_preco,
+    validar_categoria
+)
+
 from estruturas import medicamentos
-from registros import entrada, retirada, registrar_remocao, registrar_alteracao
-from reposicao import cadastrar_repo, buscar_repo, cancelar_repo, atualizar_repo
+from registros import entrada, registrar_remocao, registrar_alteracao
+from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from estoque import gerar_id
-import time
-import os
-import pyfiglet
-from colorama import Fore, Style, init
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
@@ -25,24 +27,6 @@ init(autoreset=True)
 # MENU DE MEDICAMENTOS
 def menu_med() :
     while True:
-        limpar_tela()
-        print(Fore.YELLOW  + "========================================= ")
-        print(Fore.GREEN  +"          MENU DE MEDICAMENTOS            ")
-        print(Fore.YELLOW  + "========================================= \n")
-        print(" [1] - Adicionar medicamento \n",
-            "[2] - Alterar medicamento \n",
-            "[3] - Remover medicamento \n",
-            "[4] - Listar medicamentos \n",
-            "[5] - Buscar medicamento \n",
-            "[6] - Listar por categoria \n",
-            "[7] - Listar / ordenar por preço \n"
-            " [0] - Voltar \n")
-        
-        # VERIFICA O VALOR DIGITADO
-        op_med = ler_int(Fore.LIGHTGREEN_EX + "Digite sua ação :  ") # verifica se realmente é int
-
-        
-        print("----------------------------------------")
         
         # MATCH CASE PARA O MENU
         match op_med :
@@ -78,11 +62,11 @@ def menu_med() :
                     # VERIFICA SE O ESTOQUE ESTÁ ABAIXO DO MÍNIMO [15]
                     if medicamento["estoque"] < 15:
                         
-                        print(Fore.RED + "\nEstoque menor que o estoque mínimo!\n")
+                        print("\nEstoque menor que o estoque mínimo!\n")
                         cadastrar_repo(medicamento)
-                    input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
+                    input("\nPressione ENTER para continuar...")
                 else:
-                    print(Fore.RED + f"\n [ERROR] : {resultado}")
+                    print( f"\n [ERROR] : {resultado}")
             
             # ALTERAÇÃO DE MEDICAMENTO
             case 2 :
