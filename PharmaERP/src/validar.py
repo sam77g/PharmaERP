@@ -1,8 +1,6 @@
 # ARQUIVO COM FUNÇÕES DE VALIDAÇÃO
 
 import math # importando a biblioteca math
-import pyfiglet
-from colorama import Fore, Style, init
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
