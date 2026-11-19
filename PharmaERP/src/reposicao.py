@@ -1,13 +1,12 @@
 # ARQUIVO EXCLUSIVO PARA AS REPOSIÇÕES reposicao.py 
 # =========== IMPORTS ===========
-from validar import validar_estoque
+from .validar import validar_estoque
 from collections import deque
-from estoque import gerar_id, gerar_id_repo
-from estruturas import solicitacoes_reposicao, limpar_tela, medicamentos 
-from registros import registrar_reposicao
+from .estoque import gerar_id, gerar_id_repo
+from .estruturas import solicitacoes_reposicao, limpar_tela, medicamentos 
+from .registros import registrar_reposicao
 import time
-import pyfiglet
-from colorama import Fore, Style, init
+
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
@@ -77,9 +76,7 @@ def menu_repo():
                 input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             # 0 - sai do loop e volta pro menu anterior
             case 0:
-                print(Fore.LIGHTYELLOW_EX +" -- SAINDO DE REPOSIÇÃO --")
                 time.sleep(0.5)
-                limpar_tela()
                 break
 
             # qualquer outro número
@@ -286,6 +283,22 @@ def alterar_repo(nome):
         print("A quantidade deve ser maior que 0."); return
     repo["quantidade_solicitada"] = qtd   # repo é a referência da fila, então já atualiza lá
     print("Quantidade solicitada alterada!")
+
+# FUNÇÃO PARA ATUALIZAR A REPOSIÇAO
+def atualizar_repo(med):
+    repo = buscar_repo(med)
+
+    if repo is None:
+        if med["estoque"] < 15:
+            cadastrar_repo(med)
+        return
+
+    if med["estoque"] >= 15:
+        cancelar_repo(med)
+        return
+
+    cancelar_repo(med)
+    cadastrar_repo(med)
 
 # menor número = maior prioridade
 PRIORIDADE = {"CRÍTICO": 0, "ALERTA": 1, "AVISO": 2}

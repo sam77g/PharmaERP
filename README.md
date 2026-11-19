@@ -1,6 +1,6 @@
 <div align="center">
 
-# PharmaERP
+# PharmaERP GUI Version
 
 **Sistema de gerenciamento de medicamentos e solicitações de reposição para uma farmácia, desenvolvido em Python como projeto acadêmico de Estruturas de Dados.**
 
@@ -357,22 +357,25 @@ O processo de atendimento segue aproximadamente estas etapas:
 A aplicação foi dividida em módulos para separar responsabilidades.
 
 ```text
-TDE_ESTRUTURA/
-│
-├── tde/
+.
+├── PharmaERP
+│   ├── Dockerfile
+│   ├── requirements.txt
 │   ├── main.py
-│   ├── estruturas.py
-│   ├── medicamentos.py
-│   ├── reposicao.py
-│   ├── relatorios.py
-│   ├── estoque.py
-│   └── validar.py
-│
-├── CONTRIBUTING.md
-├── DOCUMENTAÇÃO.md
-├── LICENSE
-├── README.md
-└── .gitignore
+│   ├── docs
+│   │   ├── CONTRIBUTING.md
+│   │   └── LICENSE
+│   ├── interface
+│   │   └── principal.py
+│   └── src
+│       ├── estoque.py
+│       ├── estruturas.py
+│       ├── medicamentos.py
+│       ├── registros.py
+│       ├── relatorios.py
+│       ├── reposicao.py
+│       └── validar.py
+└── README.md
 ```
 
 ### Responsabilidade dos módulos
