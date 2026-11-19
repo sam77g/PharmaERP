@@ -6,8 +6,17 @@
 #     controlar o fluxo geral do programa.
 
 # IMPORTS
-import time
+from src.medicamentos import (
+    cadastrar_medicamento,
+    listar_medicamentos,
+    buscar_medicamento,
+    alterar_medicamento,
+    remover_medicamento
+)
+
+from src.reposicao import cadastrar_repo
 from interface.interface import iniciar_interface
+import time
 
 if __name__ == "__main__":
     iniciar_interface()
