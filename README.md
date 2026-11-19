@@ -436,33 +436,74 @@ python3 --version
 
 ---
 
-## 10. Como Executar
+## 10. Como Executar 
 
-### 10.1. Clonar o repositório
+### Com docker 
 
-```bash
-git clone https://github.com/sam77g/TDE_ESTRUTURA.git
-```
-
-### 10.2. Acessar o projeto
+#### I Clonar o repositório
 
 ```bash
-cd TDE_ESTRUTURA/tde
+git clone https://github.com/sam77g/PharmaERP/tree/PharmaERP-CLI
 ```
 
-### 10.3. Instalar as dependências
+#### II Acessar o projeto
 
 ```bash
-pip install pyfiglet colorama
+cd ParmaERP/src
 ```
 
-Ou:
+#### III Buildar
 
 ```bash
-pip3 install pyfiglet colorama
+docker build -t pharma_erp .
 ```
 
-### 10.4. Executar
+#### IV Rodar o container
+
+```bash
+docker run -it --rm pharma_erp 
+```
+
+### Sem docker
+
+#### 10.1 Clonar o repositório
+
+```bash
+git clone https://github.com/sam77g/PharmaERP/tree/PharmaERP-CLI
+```
+
+#### 10.2 Acessar o projeto
+
+```bash
+cd ParmaERP/src
+```
+
+#### 10.3 Instale o suporte a ambientes virtuais do Python :
+
+```bash
+sudo apt update
+sudo apt install python3-venv python3-full -y
+```
+
+#### 10.4 Crie o ambiente virtual na pasta do projeto 
+
+```bash
+python3 -m venv .venv
+```
+
+#### 10.5 Ative o ambiente virtual
+
+```bash
+source .venv/bin/activate
+```
+
+#### 10.6 Agora instale os pacotes normalmente:
+
+```bash
+pip install rich pyfiglet colorama
+```
+
+#### 10.7 Executar
 
 ```bash
 python main.py
