@@ -7,6 +7,9 @@
 
 import pyfiglet
 from colorama import Fore, Style, init
+from interface import iniciar_janela
+
+
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)
@@ -34,7 +37,31 @@ from relatorios import menu_hist
 from medicamentos import menu_med
 from reposicao import  menu_repo
 from validar import ler_int
+from interface import iniciar_janela
 
+if __name__ == "__main__":
+ # Abre a tela gráfica primeiro e aguarda o clique em "Entrar no Sistema"
+ if iniciar_janela():
+
+     # Inicializa o colorama (necessário para compatibilidade com Windows)
+        init(autoreset=True)
+
+        # Gera a arte do texto
+        texto_art = pyfiglet.figlet_format("PharmaERP", font="rozzo")
+
+        # Imprime o título em amarelo brilhante
+        print(Fore.YELLOW + Style.BRIGHT + texto_art)
+
+        # Subtítulo e descrições
+        print(Fore.YELLOW + "Sistema de controle farmaceutico")
+        print(
+            Fore.YELLOW
+            + "Samuel , Samoel , Marcos & Gabriel "
+            + Fore.WHITE
+            + " | "
+            + Fore.MAGENTA
+            + " TDE Estrutura de Dados \n"
+        )
 # =========== SISTEMA PRINCIPAL ===========
 
 while True:
