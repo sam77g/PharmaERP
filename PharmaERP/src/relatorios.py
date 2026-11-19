@@ -2,12 +2,10 @@
 # Esse arquivo será responsável pelas funcionalidades que analisam os dados. relatorios.py 
 # consultas e relatórios
 from collections import deque 
-from datetime import datetime
-from reposicao import cancelar_repo, cadastrar_repo, buscar_repo
-from estruturas import historico,limpar_tela, medicamentos
+from .datetime import datetime
+from .reposicao import cancelar_repo, cadastrar_repo, buscar_repo
+from .estruturas import historico,limpar_tela, medicamentos
 import time
-import pyfiglet
-from colorama import Fore, Style, init
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)

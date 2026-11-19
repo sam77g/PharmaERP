@@ -7,7 +7,7 @@
 # alterar_medicamento()
 # remover_medicamento()
 # Também terá algumas validações
-from validar import (
+from .validar import (
     validar_medicamento,
     validar_estoque,
     validar_nome,
@@ -15,10 +15,10 @@ from validar import (
     validar_categoria
 )
 
-from estruturas import medicamentos
-from registros import entrada, registrar_remocao, registrar_alteracao
-from reposicao import cadastrar_repo, buscar_repo, cancelar_repo
-from estoque import gerar_id
+from .estruturas import medicamentos
+from .registros import entrada, registrar_remocao, registrar_alteracao
+from .reposicao import cadastrar_repo, buscar_repo, cancelar_repo
+from .estoque import gerar_id
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)

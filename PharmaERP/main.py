@@ -7,10 +7,10 @@
 
 # IMPORTS
 import time
-from relatorios import menu_hist
-from medicamentos import menu_med
-from reposicao import  menu_repo
-from validar import ler_int
+from interface.interface import iniciar_interface
+
+if __name__ == "__main__":
+    iniciar_interface()
 
 # =========== SISTEMA PRINCIPAL ===========
 

@@ -1,13 +1,12 @@
 # ARQUIVO EXCLUSIVO PARA AS REPOSIÇÕES reposicao.py 
 # =========== IMPORTS ===========
-from validar import validar_estoque
-from collections import deque
-from estoque import gerar_id, gerar_id_repo
-from estruturas import solicitacoes_reposicao, limpar_tela, medicamentos 
-from registros import registrar_reposicao
+from .validar import validar_estoque
+from .collections import deque
+from .estoque import gerar_id, gerar_id_repo
+from .estruturas import solicitacoes_reposicao, limpar_tela, medicamentos 
+from .registros import registrar_reposicao
 import time
-import pyfiglet
-from colorama import Fore, Style, init
+
 
 # Inicializa o colorama (necessário para compatibilidade com Windows)
 init(autoreset=True)

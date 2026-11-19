@@ -3,10 +3,8 @@
 Esse arquivo será responsável por registrar as mudanças nos medicamentos 
 """
 from datetime import datetime
-from estruturas import historico,limpar_tela, medicamentos
+from .estruturas import historico,limpar_tela, medicamentos
 import time
-import pyfiglet
-from colorama import Fore, Style, init
 
 def DataDeModificacao() :
     agora = datetime.now()
