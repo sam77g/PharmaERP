@@ -14,36 +14,51 @@ from .validar import (
     validar_preco,
     validar_categoria
 )
-
 from .estruturas import medicamentos
 from .registros import entrada, registrar_remocao, registrar_alteracao
 from .reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from .estoque import gerar_id
+import tkinter as tk
 
 
 
 # MENU DE MEDICAMENTOS
 def menu_med() :
+    
+    janela_menu = Tk.Tk()
+    janela.title("PharmaERP - Menu Medicamentos")
+    janela.geometry("520x430")
+    janela.resizable(False, False)
+    janela.configure(bg="#121820")
+    janela.eval("tk::PlaceWindow . center")
+    #tela de boas vindas 
+    tela_boas_vindas = tk.Frame(janela, bg="#121820")
+    tela_boas_vindas.pack(fill="both", expand=True)
+    
     while True:
         
         # MATCH CASE PARA O MENU
         match op_med :
             # adicionar medicamento
             case 1 :
-                nome = input("Digite o nome do medicamento: ").strip().lower()
-                while validar_nome(nome, medicamentos) == False :
-                    print(Fore.RED + "Digite um nome válido ! \n")
-                    nome = input("Digite o nome do medicamento: ").strip().lower()
-                    
-                estoque = ler_int("Digite o estoque : ")
+                nome = tk.Label(janela_menu, text="Digite o nome do medicamento:")
+                nome.pack()
                 
+                while validar_nome(nome, medicamentos) == False :
+                    return False
+                
+                estoque = tk.Label(janela_menu, text="Digite o estoque:")
+                estoque.pack()
+                
+                preco = tk.Label(janela_menu, text="Digite o preço :")
+                preco.pack()
                 
                 # dicionário do medicamento
                 medicamento = {
                     "medicamento": nome,
                     "categoria": categoria(),
                     "estoque": estoque,
-                    "preco": ler_float("Digite o preço: "), # valida e adiciona o preço
+                    "preco": preco, # valida e adiciona o preço
                     "id": gerar_id() # gera um ID único para o medicamento 
                 }
                 
@@ -56,15 +71,11 @@ def menu_med() :
                 if resultado is True:
                     # CADASTRA O MEDICAMENTO
                     cadastrar_medicamento(medicamento)
-
                     # VERIFICA SE O ESTOQUE ESTÁ ABAIXO DO MÍNIMO [15]
                     if medicamento["estoque"] < 15:
-                        
-                        print("\nEstoque menor que o estoque mínimo!\n")
-                        cadastrar_repo(medicamento)
-                    input("\nPressione ENTER para continuar...")
+                        cadastrar_repo(medicamento)                    
                 else:
-                    print( f"\n [ERROR] : {resultado}")
+                    return False
             
             # ALTERAÇÃO DE MEDICAMENTO
             case 2 :
@@ -72,11 +83,9 @@ def menu_med() :
                     nome = medicamentos[0]["medicamento"]
                     alterar_medicamento(nome)
                 else :
-                    alt = input("Digite o medicamento: ") # salva o nome do medicamento
                     alterar_medicamento(alt) # redireciona para a função de alteração
                 
                 time.sleep(1)
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
             
             # REMOÇÃO DE MEDICAMENTO
             case 3 :
@@ -84,26 +93,23 @@ def menu_med() :
                     nome = medicamentos[0]["medicamento"]
                     remover_medicamento(nome) # redireciona para a função de remoção
                 else :
-                    rem = input("Digite o medicamento a ser removido: ") # salva o nome do medicamento
                     remover_medicamento(rem) # redireciona para a função de remoção
                     time.sleep(1)
                     
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
                 
             # LISTA TODOS OS MEDICAMENTOS CADASTRADOS
             case 4 :
                 listar_medicamentos() # chamada da função de listagem
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")            
+
             # BUSCA DE MEDICAMENTO
             case 5 :
                 if len(medicamentos) == 1 :
                     nome = medicamentos[0]["medicamento"]
                     buscar_medicamento(nome) # chamada da função de busca
                 else :
-                    busca = input("Digite o medicamento: ") # salva o nome do medicamento
                     buscar_medicamento(busca) # chamada da função de busca
                     
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
+                
             
             # LISTAGEM/BUSCA FILTRADA
             case 6 :
@@ -121,15 +127,14 @@ def menu_med() :
                 
             # SAÍDA
             case 0 :
-                print(Fore.LIGHTYELLOW_EX +" -- SAINDO DE MEDICAMENTOS --")
-                time.sleep(0.5)
-                limpar_tela()
                 break
             
             # VALOR INVÁLIDO 
             case _ :
-                print(Fore.RED + " \n [ERROR] VALOR INVÁLIDO !")
+                return False
 
+def menu_medicamentos() :   
+    print("menu medicamentos")
 
 # FUNÇÃO PARA LIMPAR TELA
 def limpar_tela():
