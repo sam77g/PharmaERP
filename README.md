@@ -357,20 +357,22 @@ O processo de atendimento segue aproximadamente estas etapas:
 A aplicação foi dividida em módulos para separar responsabilidades.
 
 ```text
-TDE_ESTRUTURA/
-│
-├── tde/
-│   ├── main.py
-│   ├── estruturas.py
-│   ├── medicamentos.py
-│   ├── reposicao.py
-│   ├── relatorios.py
-│   ├── estoque.py
-│   └── validar.py
-│
-├── CONTRIBUTING.md
-├── DOCUMENTAÇÃO.md
-├── LICENSE
+├── PharmaERP
+│   ├── docs
+│   │   ├── CONTRIBUTING.md
+│   │   └── LICENSE
+│   └── src
+│       ├── Dockerfile
+│       ├── .dockerignore
+│       ├── estoque.py
+│       ├── estruturas.py
+│       ├── main.py
+│       ├── medicamentos.py
+│       ├── registros.py
+│       ├── relatorios.py
+│       ├── reposicao.py
+│       ├── requirements.txt
+│       └── validar.py
 ├── README.md
 └── .gitignore
 ```
@@ -436,9 +438,9 @@ python3 --version
 
 ---
 
-## 10. Como Executar 
+## 10. Como Executar
 
-### Com docker 
+### Com docker
 
 #### I Clonar o repositório
 
