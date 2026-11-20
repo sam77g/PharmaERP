@@ -517,63 +517,6 @@ def tela_ordenar(pai):
     _botao(win, "Fechar", voltar, width=14).pack(pady=(8, 12))
 
 
-# ---------------------------- MENU ----------------------------
-
-def menu_med(janela_principal, tela_anterior):
-    """Abre o menu de medicamentos como um Frame, escondendo a tela anterior."""
-    tela_anterior.pack_forget()
-    
-    frame_med = tk.Frame(janela_principal, bg=BG)
-    frame_med.pack(fill="both", expand=True)
-
-    tk.Label(
-        frame_med,
-        text="Medicamentos",
-        font=("Helvetica", 22, "bold"),
-        fg=VERDE,
-        bg=BG
-    ).pack(pady=(25, 2))
-    
-    tk.Label(
-        frame_med,
-        text="Menu de Medicamentos",
-        font=("Helvetica", 11),
-        fg=AMARELO,
-        bg=BG
-    ).pack(pady=(0, 14))
-
-    contador = tk.Label(frame_med, font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG)
-    contador.pack(pady=(0, 10))
-
-    def atualizar_contador():
-        contador.config(text=f"{len(medicamentos)} medicamento(s) cadastrado(s)")
-    
-    atualizar_contador()
-
-    def voltar():
-        frame_med.destroy()
-        tela_anterior.pack(fill="both", expand=True)
-
-    opcoes = [
-        ("1. Cadastrar medicamento", lambda: tela_cadastrar(frame_med, atualizar_contador)),
-        ("2. Listar medicamentos", lambda: tela_listar(frame_med)),
-        ("3. Buscar (nome / categoria)", lambda: tela_buscar(frame_med)),
-        ("4. Alterar medicamento", lambda: tela_alterar(frame_med, atualizar_contador)),
-        ("5. Remover medicamento", lambda: tela_remover(frame_med, atualizar_contador)),
-        ("6. Ordenar por preço", lambda: tela_ordenar(frame_med)),
-    ]
-    
-    for texto, comando in opcoes:
-        _botao(frame_med, texto, comando, width=30).pack(pady=5)
-
-    _botao(
-        frame_med,
-        text="0. Voltar",
-        command=voltar,
-        cor=VERMELHO,
-        hover=VERMELHO_CLARO,
-        width=30
-    ).pack(pady=(18, 6))
 
 # ---------------------------- MENU ----------------------------
 
