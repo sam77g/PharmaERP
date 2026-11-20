@@ -110,7 +110,7 @@ def iniciar_janela():
     tk.Button(
         tela_menu,
         text="3. Histórico",
-        command=menu_hist, # direciona para o menu de histórico / relatórios 
+        command=lambda: menu_hist(janela, tela_menu), # Passa a janela principal e a tela atual
         **estilo_botao
     ).pack(pady=6)
 
