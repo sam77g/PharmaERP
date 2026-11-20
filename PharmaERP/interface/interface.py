@@ -103,7 +103,7 @@ def iniciar_janela():
     tk.Button(
         tela_menu,
         text="2. Reposição",
-        command=menu_repo, # direciona para o menu de reposição
+        command=lambda: menu_repo(janela, tela_menu), # Passa a janela principal e a tela atual
         **estilo_botao
     ).pack(pady=6)
 
