@@ -727,19 +727,6 @@ Para informações sobre colaboração, padrões de código e organização do r
 - [x] Tabelas coloridas, listas suspensas e caixas de diálogo;
 - [x] `Dockerfile` com suporte ao Tkinter.
 
-### Pendências conhecidas
-
-| Item | Situação |
-|---|---|
-| Busca de reposição pela interface | A função `buscar_repo()` existe e é usada internamente, mas não há tela de busca no menu de reposição |
-| Menu DEBUG | A função `DEBUG()` existe em `estruturas.py` (imprime no terminal), mas não está ligada à interface |
-| Registro de `SAÍDA` | A função `retirada()` existe em `registros.py`, mas nenhuma tela a utiliza |
-| `requirements.txt` | Ainda lista `colorama` e `pyfiglet`, que a GUI não usa |
-| `Fore` em `registros.py` e `relatorios.py` | Mensagens de erro herdadas da versão de terminal usam `Fore` sem importar `colorama`; esses caminhos de erro lançariam `NameError` |
-| Quantidade solicitada igual a 0 | `alterar_repo()` aceita `0` (usa `validar_estoque`), embora a tela informe que deve ser maior que 0 |
-| Desfazer `REPOSIÇÃO` | Se já houver uma solicitação pendente para o medicamento, ela é mantida com a criticidade e a quantidade antigas |
-| `menu_med` duplicado | A função está definida duas vezes em `medicamentos.py`; vale a segunda definição |
-| Número de versão | `__version__` em `interface/__init__.py` e `src/__init__.py` ainda indica `1.3.0` |
 
 ### Fora do escopo da versão atual
 
