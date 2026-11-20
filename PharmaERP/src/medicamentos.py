@@ -50,132 +50,63 @@ def iniciar_menu_med() :
 
 # MENU DE MEDICAMENTOS
 def menu_med(valor) :
-    op = valor
-    # MATCH CASE PARA O MENU
-    match op : # ainda não sei o que fazer aqui
-        # adicionar medicamento
-        case 1 :
-            # ENTRADA DE NOME
-            nome_label = tk.Label(janela_menu, text="Digite o nome do medicamento:")
-            nome_label.pack()
-            
-            nome_entry = tk.Entry(janela_menu)
-            nome_entry.pack()
-            
-            if not validar_nome(nome, medicamentos) :
-                messagebox.showerror("NOME INVÁLIDO", "Nome digitado inválido !")
-                return False
-            
-            # ENTRADA DE ESTOQUE
-            estoque_label = tk.Label(janela_menu, text="Digite o estoque:")
-            estoque_label.pack()
-            
-            estoque_entry = tk.Entry(janela_menu)
-            estoque_entry.pack()
-            
-            if not validar_estoque(estoque_entry) :
-                messagebox.showerror("ESTOQUE INVÁLIDO", "Estoque digitado inválido !")
-                return False
-            
-            #  ENTRADA DE PREÇO
-            preco_label = tk.Label(janela_menu, text="Digite o preço :")
-            preco_label.pack()
-            
-            preco_entry = tk.Entry(janela_menu)
-            preco_entry.pack()
-            
-            if not validar_preco(preco_entry) :
-                messagebox.showerror("PREÇO INVÁLIDO", "Preço digitado inválido !")
-                return False
-            
-            
-            # dicionário do medicamento
-            medicamento = {
-                "medicamento": nome,
-                "categoria": categoria(),
-                "estoque": estoque,
-                "preco": preco, # valida e adiciona o preço
-                "id": gerar_id() # gera um ID único para o medicamento 
-            }
-            
-            # VALIDA OS DADOS DO MEDICAMENTO
-            resultado = validar_medicamento(
-                medicamento,
-                medicamentos
-            )
-            
-            if resultado is True:
-                # CADASTRA O MEDICAMENTO
-                cadastrar_medicamento(medicamento)
-                # VERIFICA SE O ESTOQUE ESTÁ ABAIXO DO MÍNIMO [15]
-                if medicamento["estoque"] < 15:
-                    cadastrar_repo(medicamento)                    
-            else:
-                return False
-        
-        # ALTERAÇÃO DE MEDICAMENTO
-        case 2 :
-            if len(medicamentos) == 1 :
-                nome = medicamentos[0]["medicamento"]
-                alterar_medicamento(nome)
-            else :
-                alterar_medicamento(alt) # redireciona para a função de alteração
-            
-            time.sleep(1)
-        
-        # REMOÇÃO DE MEDICAMENTO
-        case 3 :
-            if len(medicamentos) == 1 :
-                nome = medicamentos[0]["medicamento"]
-                remover_medicamento(nome) # redireciona para a função de remoção
-            else :
-                rem_label = tk.Label(janela_menu, text="Digite o medicamento :")
-                rem_label.pack()
-                
-                rem_entry = tk.Entry(janela_menu)
-                rem_entry.pack()    
-                
-                remover_medicamento(rem_entry) # redireciona para a função de remoção
-                time.sleep(1)
-                
-            
-        # LISTA TODOS OS MEDICAMENTOS CADASTRADOS
-        case 4 :
-            listar_medicamentos() # chamada da função de listagem
+# adicionar medicamento
 
-        # BUSCA DE MEDICAMENTO
-        case 5 :
-            if len(medicamentos) == 1 :
-                nome = medicamentos[0]["medicamento"]
-                buscar_medicamento(nome) # chamada da função de busca
-            else :
-                buscar_medicamento(busca) # chamada da função de busca
-                
-            
-        
-        # LISTAGEM/BUSCA FILTRADA
-        case 6 :
-            opc_busca_categoria = categoria() # recebe o valor para filtragem
-            buscar_medicamento_cat(opc_busca_categoria) # lista pela categoria
-            
+# ALTERAÇÃO DE MEDICAMENTO
+    if len(medicamentos) == 1 :
+        nome = medicamentos[0]["medicamento"]
+        alterar_medicamento(nome)
+    else :
+        alterar_medicamento(alt) # redireciona para a função de alteração
+    
+    time.sleep(1)
 
-        # LISTAGEM ORDENADA POR PREÇO
-        case 7 :
-            for i in ordenar_por_preco(medicamentos): # percorre e ordena os medicamentos
-                # printa no terminal
-                print(f"{i['medicamento'].upper()} - R$ {i['preco']} (estoque: {i['estoque']})")
-                
-            
-            
-        # SAÍDA
-        case 0 :
-            break
+# REMOÇÃO DE MEDICAMENTO
+    if len(medicamentos) == 1 :
+        nome = medicamentos[0]["medicamento"]
+        remover_medicamento(nome) # redireciona para a função de remoção
+    else :
+        rem_label = tk.Label(janela_menu, text="Digite o medicamento :")
+        rem_label.pack()
         
-        # VALOR INVÁLIDO 
-        case _ :
-            return False
+        rem_entry = tk.Entry(janela_menu)
+        rem_entry.pack()    
         
-    janela_menu.mainloop()
+        remover_medicamento(rem_entry) # redireciona para a função de remoção
+        time.sleep(1)
+        
+    
+# LISTA TODOS OS MEDICAMENTOS CADASTRADOS
+    listar_medicamentos() # chamada da função de listagem
+
+# BUSCA DE MEDICAMENTO
+    if len(medicamentos) == 1 :
+        nome = medicamentos[0]["medicamento"]
+        buscar_medicamento(nome) # chamada da função de busca
+    else :
+        buscar_medicamento(busca) # chamada da função de busca
+        
+    
+
+# LISTAGEM/BUSCA FILTRADA
+    opc_busca_categoria = categoria() # recebe o valor para filtragem
+    buscar_medicamento_cat(opc_busca_categoria) # lista pela categoria
+    
+
+# LISTAGEM ORDENADA POR PREÇO
+    for i in ordenar_por_preco(medicamentos): # percorre e ordena os medicamentos
+        # printa no terminal
+        print(f"{i['medicamento'].upper()} - R$ {i['preco']} (estoque: {i['estoque']})")
+        
+    
+    
+# SAÍDA
+    break
+
+# VALOR INVÁLIDO 
+    return False
+
+janela_menu.mainloop()
 
 def menu_medicamentos() :   
     print("menu medicamentos")
@@ -195,12 +126,71 @@ def categoria(valor) :
         return False
 
 # FUNÇAO DE CADASTRO DE MEDICAMENTOS
-def cadastrar_medicamento(med):
-    if validar_medicamento(med, medicamentos) is not True:
+def cadastrar_medicamento():
+    
+    # ENTRADA DE NOME
+    nome_label = tk.Label(janela_menu, text="Digite o nome do medicamento:")
+    nome_label.pack()
+    
+    nome_entry = tk.Entry(janela_menu)
+    nome_entry.pack()
+    
+    if not validar_nome(nome, medicamentos) :
+        messagebox.showerror("NOME INVÁLIDO", "Nome digitado inválido !")
+        return False
+    
+    # ENTRADA DE ESTOQUE
+    estoque_label = tk.Label(janela_menu, text="Digite o estoque:")
+    estoque_label.pack()
+    
+    estoque_entry = tk.Entry(janela_menu)
+    estoque_entry.pack()
+    
+    if not validar_estoque(estoque_entry) :
+        messagebox.showerror("ESTOQUE INVÁLIDO", "Estoque digitado inválido !")
+        return False
+    
+    #  ENTRADA DE PREÇO
+    preco_label = tk.Label(janela_menu, text="Digite o preço :")
+    preco_label.pack()
+    
+    preco_entry = tk.Entry(janela_menu)
+    preco_entry.pack()
+    
+    if not validar_preco(preco_entry) :
+        messagebox.showerror("PREÇO INVÁLIDO", "Preço digitado inválido !")
+        return False
+    
+    
+    # dicionário do medicamento
+    medicamento = {
+        "medicamento": nome,
+        "categoria": categoria(),
+        "estoque": estoque,
+        "preco": preco, # valida e adiciona o preço
+        "id": gerar_id() # gera um ID único para o medicamento 
+    }
+    
+    # VALIDA OS DADOS DO MEDICAMENTO
+    resultado = validar_medicamento(
+        medicamento,
+        medicamentos
+    )
+    
+    if resultado is True:
+        # CADASTRA O MEDICAMENTO
+        cadastrar_medicamento(medicamento)
+        # VERIFICA SE O ESTOQUE ESTÁ ABAIXO DO MÍNIMO [15]
+        if medicamento["estoque"] < 15:
+            cadastrar_repo(medicamento)                    
+    else:
+        return False
+    
+    if validar_medicamento(medicamento, medicamentos) is not True:
         return False
 
-    medicamentos.append(med)
-    entrada(med)
+    medicamentos.append(medicamento)
+    entrada(medicamento)
     return True
 
 
