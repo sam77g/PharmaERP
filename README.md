@@ -661,7 +661,7 @@ Esses recursos não fazem parte do escopo da versão acadêmica atual.
 
 Este projeto está licenciado sob a **MIT License**.
 
-Consulte o arquivo [`LICENSE`](./docs/LICENSE) para obter o texto completo da licença.
+Consulte o arquivo [`LICENSE`](./PharmaERP/docs/LICENSE) para obter o texto completo da licença.
 
 ---
 
