@@ -19,21 +19,21 @@ from .registros import entrada, registrar_remocao, registrar_alteracao
 from .reposicao import cadastrar_repo, buscar_repo, cancelar_repo
 from .estoque import gerar_id
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 
 def iniciar_menu_med() :
-    janela_menu = Tk.Tk()
-    janela.title("PharmaERP - Menu Medicamentos")
-    janela.geometry("520x430")
-    janela.resizable(False, False)
-    janela.configure(bg="#121820")
-    janela.eval("tk::PlaceWindow . center")
+    janela_menu = Tk.Toplevel()
+    janela_menu.title("PharmaERP - Menu Medicamentos")
+    janela_menu.geometry("520x430")
+    janela_menu.resizable(False, False)
+    janela_menu.configure(bg="#121820")
+    janela_menu.eval("tk::PlaceWindow . center")
     #tela de boas vindas 
     tela_boas_vindas = tk.Frame(janela, bg="#121820")
     tela_boas_vindas.pack(fill="both", expand=True)
     
     tk.Button(
-        tela_boas_vindas,
+        janela_menu,
         text="Entrar no Sistema",
         font=("Helvetica", 12, "bold"),
         fg="#121820",
@@ -49,10 +49,10 @@ def iniciar_menu_med() :
 
 
 # MENU DE MEDICAMENTOS
-def menu_med() :
-    
+def menu_med(valor) :
+    op = valor
     # MATCH CASE PARA O MENU
-    match op_med :
+    match op : # ainda não sei o que fazer aqui
         # adicionar medicamento
         case 1 :
             # ENTRADA DE NOME
@@ -63,6 +63,7 @@ def menu_med() :
             nome_entry.pack()
             
             if not validar_nome(nome, medicamentos) :
+                messagebox.showerror("NOME INVÁLIDO", "Nome digitado inválido !")
                 return False
             
             # ENTRADA DE ESTOQUE
@@ -73,6 +74,7 @@ def menu_med() :
             estoque_entry.pack()
             
             if not validar_estoque(estoque_entry) :
+                messagebox.showerror("ESTOQUE INVÁLIDO", "Estoque digitado inválido !")
                 return False
             
             #  ENTRADA DE PREÇO
@@ -83,6 +85,7 @@ def menu_med() :
             preco_entry.pack()
             
             if not validar_preco(preco_entry) :
+                messagebox.showerror("PREÇO INVÁLIDO", "Preço digitado inválido !")
                 return False
             
             
@@ -126,10 +129,13 @@ def menu_med() :
                 nome = medicamentos[0]["medicamento"]
                 remover_medicamento(nome) # redireciona para a função de remoção
             else :
-                rem = tk.Label(janela_menu, text="Digite o medicamento :")
-                rem.pack()
+                rem_label = tk.Label(janela_menu, text="Digite o medicamento :")
+                rem_label.pack()
                 
-                remover_medicamento(rem) # redireciona para a função de remoção
+                rem_entry = tk.Entry(janela_menu)
+                rem_entry.pack()    
+                
+                remover_medicamento(rem_entry) # redireciona para a função de remoção
                 time.sleep(1)
                 
             
@@ -151,7 +157,7 @@ def menu_med() :
         case 6 :
             opc_busca_categoria = categoria() # recebe o valor para filtragem
             buscar_medicamento_cat(opc_busca_categoria) # lista pela categoria
-            input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
+            
 
         # LISTAGEM ORDENADA POR PREÇO
         case 7 :
@@ -159,7 +165,7 @@ def menu_med() :
                 # printa no terminal
                 print(f"{i['medicamento'].upper()} - R$ {i['preco']} (estoque: {i['estoque']})")
                 
-            input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
+            
             
         # SAÍDA
         case 0 :
