@@ -13,41 +13,6 @@ def DataDeModificacao() :
     data_formatada = agora.strftime("%d/%m/%Y %H:%M") # SALVA O DIA E HORA DE ENTRADA
     return data_formatada
 
-# MENU
-def menu_hist() :
-    while True:
-        limpar_tela()
-        print(Fore.YELLOW  +"========================================= ")
-        print(Fore.GREEN  +"             MENU DE HISTÓRICO            ")
-        print(Fore.YELLOW  +"========================================= ")
-        print(
-                " [1] - Listar Histórico \n",
-                "[2] - Desfazer / Voltar histórico \n"
-                " [0] - Voltar \n"
-            )
-        try :
-            opcao = int(input(Fore.LIGHTGREEN_EX + f"Digite a opçao desejada : " + Fore.BLUE))
-        except ValueError :
-            print("Digite apenas números!")
-            time.sleep(1)
-            continue
-        
-        match opcao :
-            case 1 :
-                listar_historico()
-                time.sleep(1)
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
-                
-            case 2 :
-                desfazer_ultima()
-                time.sleep(1)
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
-                
-            case 0 :
-                print(Fore.LIGHTGREEN_EX +"Voltando para o menu principal ...")
-                time.sleep(0.5)
-                limpar_tela()
-                return
 
 # FUNÇÃO PARA LISTAR O HISTÓRICO
 def listar_historico():
