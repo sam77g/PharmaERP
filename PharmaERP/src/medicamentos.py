@@ -58,8 +58,8 @@ def _to_float(texto):
 def cadastrar_medicamento(nome, categoria, estoque, preco):
     nome = str(nome).strip()
     categoria = str(categoria).strip().upper()
-    estoque = ler_int(estoque)
-    preco = ler_float(preco)
+    estoque = _to_int(estoque)
+    preco = _to_float(preco)
 
     if not validar_nome(nome, medicamentos):
         return False, "Nome inválido ou já cadastrado."
@@ -282,11 +282,22 @@ def _titulo(pai, texto):
     tk.Label(pai, text=texto, font=("Helvetica", 16, "bold"), fg=VERDE, bg=BG).pack(pady=(18, 4))
 
 
-# ---------------------------- TELAS ----------------------------
+# ---------------------------- TELAS (como Frames) ----------------------------
+
+def _abrir_tela_frame(pai, titulo_texto, largura, altura):
+    """Função auxiliar para ocultar a tela anterior e criar um frame estruturado para a sub-tela."""
+    pai.pack_forget() # Esconde o menu de medicamentos
+    
+    # Cria um container/frame para a nova tela
+    win = tk.Frame(pai.master, bg=BG)
+    win.pack(fill="both", expand=True)
+    
+    _titulo(win, titulo_texto)
+    return win
+
 
 def tela_cadastrar(pai, ao_salvar=None):
-    win = _janela_filha(pai, "Cadastrar Medicamento", 400, 440)
-    _titulo(win, "Cadastrar Medicamento")
+    win = _abrir_tela_frame(pai, "Cadastrar Medicamento", 400, 440)
 
     e_nome = _campo(win, "Nome do medicamento")
     c_cat = _combo_categoria(win)
@@ -294,28 +305,31 @@ def tela_cadastrar(pai, ao_salvar=None):
     e_preco = _campo(win, "Preço (R$)")
     e_nome.focus_set()
 
+    def voltar():
+        win.destroy()
+        pai.pack(fill="both", expand=True) # Retorna ao menu anterior
+
     def salvar():
         ok, erro = cadastrar_medicamento(e_nome.get(), c_cat.get(),
                                         e_estoque.get(), e_preco.get())
         if not ok:
-            messagebox.showerror("Erro ao cadastrar", erro, parent=win)
+            messagebox.showerror("Erro ao cadastrar", erro, parent=win.winfo_toplevel())
             return
         msg = "Medicamento cadastrado com sucesso!"
         if buscar_repo(e_nome.get()) is not None:
             msg += "\nEstoque abaixo do mínimo: reposição solicitada."
-        messagebox.showinfo("Sucesso", msg, parent=win)
+        messagebox.showinfo("Sucesso", msg, parent=win.winfo_toplevel())
         if ao_salvar:
             ao_salvar()
-        win.destroy()
+        voltar()
 
     win.bind("<Return>", lambda _e: salvar())
     _botao(win, "Salvar", salvar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO).pack(pady=(22, 6))
-    _botao(win, "Cancelar", win.destroy, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
+    _botao(win, "Cancelar", voltar, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
 
 
 def tela_listar(pai):
-    win = _janela_filha(pai, "Medicamentos Cadastrados", 640, 470)
-    _titulo(win, "Medicamentos Cadastrados")
+    win = _abrir_tela_frame(pai, "Medicamentos Cadastrados", 640, 470)
 
     frame, tree = _tabela(win)
     frame.pack(fill="both", expand=True, padx=20, pady=5)
@@ -323,12 +337,16 @@ def tela_listar(pai):
 
     tk.Label(win, text=f"Total: {len(medicamentos)}   |   Vermelho = abaixo de {ESTOQUE_MINIMO} un.",
             font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG).pack(pady=4)
-    _botao(win, "Fechar", win.destroy, width=14).pack(pady=(2, 12))
+            
+    def voltar():
+        win.destroy()
+        pai.pack(fill="both", expand=True)
+
+    _botao(win, "Fechar", voltar, width=14).pack(pady=(2, 12))
 
 
 def tela_buscar(pai):
-    win = _janela_filha(pai, "Buscar Medicamento", 640, 500)
-    _titulo(win, "Buscar Medicamento")
+    win = _abrir_tela_frame(pai, "Buscar Medicamento", 640, 500)
 
     barra = tk.Frame(win, bg=BG)
     barra.pack(fill="x", padx=20, pady=5)
@@ -361,7 +379,7 @@ def tela_buscar(pai):
     def buscar():
         if modo.get() == "nome":
             if not e_busca.get().strip():
-                messagebox.showwarning("Atenção", "Digite o nome do medicamento.", parent=win)
+                messagebox.showwarning("Atenção", "Digite o nome do medicamento.", parent=win.winfo_toplevel())
                 return
             med = buscar_medicamento(e_busca.get())
             resultado = [med] if med else []
@@ -369,17 +387,21 @@ def tela_buscar(pai):
             resultado = buscar_medicamento_cat(combo.get())
         _preencher(tree, resultado)
         if not resultado:
-            messagebox.showinfo("Busca", "Nenhum medicamento encontrado.", parent=win)
+            messagebox.showinfo("Busca", "Nenhum medicamento encontrado.", parent=win.winfo_toplevel())
 
     win.bind("<Return>", lambda _e: buscar())
     _botao(barra, "Buscar", buscar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO, width=9).pack(side="left", padx=6)
     e_busca.focus_set()
-    _botao(win, "Fechar", win.destroy, width=14).pack(pady=(2, 12))
+    
+    def voltar():
+        win.destroy()
+        pai.pack(fill="both", expand=True)
+
+    _botao(win, "Fechar", voltar, width=14).pack(pady=(2, 12))
 
 
 def tela_alterar(pai, ao_salvar=None):
-    win = _janela_filha(pai, "Alterar Medicamento", 400, 440)
-    _titulo(win, "Alterar Medicamento")
+    win = _abrir_tela_frame(pai, "Alterar Medicamento", 400, 440)
 
     e_nome = _campo(win, "Nome do medicamento")
     e_nome.focus_set()
@@ -391,7 +413,6 @@ def tela_alterar(pai, ao_salvar=None):
     c_campo.current(0)
     c_campo.pack(fill="x", padx=30, ipady=3)
 
-    # novo valor: combobox (categoria) ou entry (estoque/preço)
     rotulo = tk.Label(win, text="Nova categoria", font=("Helvetica", 10), fg=TEXTO_SUAVE,
                     bg=BG, anchor="w")
     rotulo.pack(fill="x", padx=30, pady=(10, 2))
@@ -414,79 +435,85 @@ def tela_alterar(pai, ao_salvar=None):
             e_valor.pack(fill="x", padx=30, ipady=5)
     c_campo.bind("<<ComboboxSelected>>", trocar_campo)
 
+    def voltar():
+        win.destroy()
+        pai.pack(fill="both", expand=True)
+
     def salvar():
         nome = e_nome.get()
         if buscar_medicamento(nome) is None:
-            messagebox.showerror("Erro", "Medicamento não encontrado.", parent=win)
+            messagebox.showerror("Erro", "Medicamento não encontrado.", parent=win.winfo_toplevel())
             return
         campo = campos[c_campo.get()]
         valor = c_valor.get() if campo == 1 else e_valor.get()
         if not alterar_medicamento(nome, campo, valor):
-            messagebox.showerror("Erro", "Valor inválido.", parent=win)
+            messagebox.showerror("Erro", "Valor inválido.", parent=win.winfo_toplevel())
             return
-        messagebox.showinfo("Sucesso", "Medicamento alterado com sucesso!", parent=win)
+        messagebox.showinfo("Sucesso", "Medicamento alterado com sucesso!", parent=win.winfo_toplevel())
         if ao_salvar:
             ao_salvar()
-        win.destroy()
+        voltar()
 
     win.bind("<Return>", lambda _e: salvar())
     _botao(win, "Salvar", salvar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO).pack(pady=(22, 6))
-    _botao(win, "Cancelar", win.destroy, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
+    _botao(win, "Cancelar", voltar, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
 
 
 def tela_remover(pai, ao_salvar=None):
-    win = _janela_filha(pai, "Remover Medicamento", 400, 280)
-    _titulo(win, "Remover Medicamento")
+    win = _abrir_tela_frame(pai, "Remover Medicamento", 400, 280)
 
     e_nome = _campo(win, "Nome do medicamento")
     e_nome.focus_set()
+
+    def voltar():
+        win.destroy()
+        pai.pack(fill="both", expand=True)
 
     def remover():
         nome = e_nome.get()
         med = buscar_medicamento(nome)
         if med is None:
-            messagebox.showerror("Erro", "Medicamento não encontrado.", parent=win)
+            messagebox.showerror("Erro", "Medicamento não encontrado.", parent=win.winfo_toplevel())
             return
         if not messagebox.askyesno(
             "Confirmar remoção",
             f"Remover '{med['medicamento']}' do sistema?\n(Reposição pendente também será cancelada.)",
-            parent=win,
+            parent=win.winfo_toplevel(),
         ):
             return
         if remover_medicamento(nome):
-            messagebox.showinfo("Sucesso", "Medicamento removido!", parent=win)
+            messagebox.showinfo("Sucesso", "Medicamento removido!", parent=win.winfo_toplevel())
             if ao_salvar:
                 ao_salvar()
-            win.destroy()
+            voltar()
         else:
-            messagebox.showerror("Erro", "Não foi possível remover.", parent=win)
+            messagebox.showerror("Erro", "Não foi possível remover.", parent=win.winfo_toplevel())
 
     win.bind("<Return>", lambda _e: remover())
     _botao(win, "Remover", remover, cor=VERMELHO, hover=VERMELHO_CLARO).pack(pady=(22, 6))
-    _botao(win, "Cancelar", win.destroy).pack()
+    _botao(win, "Cancelar", voltar).pack()
 
 
 def tela_ordenar(pai):
-    win = _janela_filha(pai, "Ordenados por Preço", 640, 470)
-    _titulo(win, "Medicamentos por Preço (menor → maior)")
+    win = _abrir_tela_frame(pai, "Medicamentos por Preço (menor → maior)", 640, 470)
 
     frame, tree = _tabela(win)
     frame.pack(fill="both", expand=True, padx=20, pady=5)
     _preencher(tree, ordenar_por_preco(medicamentos))
 
-    _botao(win, "Fechar", win.destroy, width=14).pack(pady=(8, 12))
+    def voltar():
+        win.destroy()
+        pai.pack(fill="both", expand=True)
 
+    _botao(win, "Fechar", voltar, width=14).pack(pady=(8, 12))
 
-# ---------------------------- MENU ----------------------------
 
 # ---------------------------- MENU ----------------------------
 
 def menu_med(janela_principal, tela_anterior):
-    """Cria o menu de medicamentos como um Frame dentro da janela principal, escondendo a tela anterior."""
-    # Esconde a tela anterior (ex: o menu principal)
+    """Abre o menu de medicamentos como um Frame, escondendo a tela anterior."""
     tela_anterior.pack_forget()
     
-    # Cria o frame do menu de medicamentos na janela principal
     frame_med = tk.Frame(janela_principal, bg=BG)
     frame_med.pack(fill="both", expand=True)
 
@@ -515,7 +542,6 @@ def menu_med(janela_principal, tela_anterior):
     atualizar_contador()
 
     def voltar():
-        # Destrói o frame de medicamentos e exibe novamente a tela anterior
         frame_med.destroy()
         tela_anterior.pack(fill="both", expand=True)
 
@@ -539,3 +565,64 @@ def menu_med(janela_principal, tela_anterior):
         hover=VERMELHO_CLARO,
         width=30
     ).pack(pady=(18, 6))
+
+# ---------------------------- MENU ----------------------------
+
+def menu_med(janela_principal, tela_anterior):
+    """Abre o menu de medicamentos como um Frame, escondendo a tela anterior."""
+    tela_anterior.pack_forget()
+    
+    frame_med = tk.Frame(janela_principal, bg=BG)
+    frame_med.pack(fill="both", expand=True)
+
+    tk.Label(
+        frame_med,
+        text="Medicamentos",
+        font=("Helvetica", 22, "bold"),
+        fg=VERDE,
+        bg=BG
+    ).pack(pady=(25, 2))
+    
+    tk.Label(
+        frame_med,
+        text="Menu de Medicamentos",
+        font=("Helvetica", 11),
+        fg=AMARELO,
+        bg=BG
+    ).pack(pady=(0, 14))
+
+    contador = tk.Label(frame_med, font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG)
+    contador.pack(pady=(0, 10))
+
+    def atualizar_contador():
+        contador.config(text=f"{len(medicamentos)} medicamento(s) cadastrado(s)")
+    
+    atualizar_contador()
+
+    def voltar():
+        frame_med.destroy()
+        tela_anterior.pack(fill="both", expand=True)
+
+    opcoes = [
+        ("1. Cadastrar medicamento", lambda: tela_cadastrar(frame_med, atualizar_contador)),
+        ("2. Listar medicamentos", lambda: tela_listar(frame_med)),
+        ("3. Buscar (nome / categoria)", lambda: tela_buscar(frame_med)),
+        ("4. Alterar medicamento", lambda: tela_alterar(frame_med, atualizar_contador)),
+        ("5. Remover medicamento", lambda: tela_remover(frame_med, atualizar_contador)),
+        ("6. Ordenar por preço", lambda: tela_ordenar(frame_med)),
+        ("0. Voltar", voltar)
+    ]
+    
+    for texto, comando in opcoes:
+        # Se for a opção de voltar ("0."), coloca a cor vermelha; senão, usa a cor padrão do card
+        cor_botao = VERMELHO if texto.startswith("0.") else BG_CARD
+        hover_botao = VERMELHO_CLARO if texto.startswith("0.") else VERDE
+        
+        _botao(
+            frame_med, 
+            texto, 
+            comando, 
+            cor=cor_botao, 
+            hover=hover_botao, 
+            width=30
+        ).pack(pady=5)
