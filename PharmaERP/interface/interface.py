@@ -2,7 +2,6 @@ import tkinter as tk
 from src.relatorios import menu_hist
 from src.medicamentos import menu_med
 from src.reposicao import  menu_repo
-from src.validar import ler_int
 
 def iniciar_janela():
     janela = tk.Tk()
@@ -97,21 +96,21 @@ def iniciar_janela():
     tk.Button(
         tela_menu,
         text="1. Menu Medicamentos",
-        command=menu_med,
-        **estilo_botao
+        command=menu_med, # direciona para o menu de medicamentos
+        **estilo_botao # desempacota o estilo do botão
     ).pack(pady=6)
 
     tk.Button(
         tela_menu,
         text="2. Reposição",
-        command=menu_repo,
+        command=menu_repo, # direciona para o menu de reposição
         **estilo_botao
     ).pack(pady=6)
 
     tk.Button(
         tela_menu,
         text="3. Histórico",
-        command=menu_hist,
+        command=menu_hist, # direciona para o menu de histórico / relatórios 
         **estilo_botao
     ).pack(pady=6)
 
@@ -126,7 +125,7 @@ def iniciar_janela():
         fg="#ffffff",
         bg="#c0392b",
         activebackground="#e74c3c",
-        command=janela.destroy
+        command=janela.destroy # encerra a janela
     ).pack(pady=(16, 6))
 
     janela.mainloop()
