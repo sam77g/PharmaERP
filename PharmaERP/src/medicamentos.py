@@ -479,44 +479,63 @@ def tela_ordenar(pai):
 
 # ---------------------------- MENU ----------------------------
 
-def menu_med():
-    """Abre o menu de medicamentos (chamado pelo botão da tela principal)."""
-    raiz = tk._default_root
-    janela = tk.Toplevel(raiz)
-    janela.title("PharmaERP - Menu Medicamentos")
-    janela.geometry("520x590")
-    janela.resizable(False, False)
-    janela.configure(bg=BG)
-    janela.transient(raiz)
+# ---------------------------- MENU ----------------------------
 
-    # centraliza em relação à janela principal
-    janela.update_idletasks()
-    x = raiz.winfo_x() + (raiz.winfo_width() - 520) // 2
-    y = raiz.winfo_y() + (raiz.winfo_height() - 590) // 2
-    janela.geometry(f"+{max(x, 0)}+{max(y, 0)}")
+def menu_med(janela_principal, tela_anterior):
+    """Cria o menu de medicamentos como um Frame dentro da janela principal, escondendo a tela anterior."""
+    # Esconde a tela anterior (ex: o menu principal)
+    tela_anterior.pack_forget()
+    
+    # Cria o frame do menu de medicamentos na janela principal
+    frame_med = tk.Frame(janela_principal, bg=BG)
+    frame_med.pack(fill="both", expand=True)
 
-    tk.Label(janela, text="Medicamentos", font=("Helvetica", 22, "bold"),
-            fg=VERDE, bg=BG).pack(pady=(25, 2))
-    tk.Label(janela, text="Menu de Medicamentos", font=("Helvetica", 11),
-            fg=AMARELO, bg=BG).pack(pady=(0, 14))
+    tk.Label(
+        frame_med,
+        text="Medicamentos",
+        font=("Helvetica", 22, "bold"),
+        fg=VERDE,
+        bg=BG
+    ).pack(pady=(25, 2))
+    
+    tk.Label(
+        frame_med,
+        text="Menu de Medicamentos",
+        font=("Helvetica", 11),
+        fg=AMARELO,
+        bg=BG
+    ).pack(pady=(0, 14))
 
-    contador = tk.Label(janela, font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG)
+    contador = tk.Label(frame_med, font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG)
     contador.pack(pady=(0, 10))
 
     def atualizar_contador():
         contador.config(text=f"{len(medicamentos)} medicamento(s) cadastrado(s)")
+    
     atualizar_contador()
 
-    opcoes = [
-        ("1. Cadastrar medicamento", lambda: tela_cadastrar(janela, atualizar_contador)),
-        ("2. Listar medicamentos", lambda: tela_listar(janela)),
-        ("3. Buscar (nome / categoria)", lambda: tela_buscar(janela)),
-        ("4. Alterar medicamento", lambda: tela_alterar(janela, atualizar_contador)),
-        ("5. Remover medicamento", lambda: tela_remover(janela, atualizar_contador)),
-        ("6. Ordenar por preço", lambda: tela_ordenar(janela)),
-    ]
-    for texto, comando in opcoes:
-        _botao(janela, texto, comando, width=30).pack(pady=5)
+    def voltar():
+        # Destrói o frame de medicamentos e exibe novamente a tela anterior
+        frame_med.destroy()
+        tela_anterior.pack(fill="both", expand=True)
 
-    _botao(janela, "0. Voltar", janela.destroy, cor=VERMELHO, hover=VERMELHO_CLARO,
-        width=30).pack(pady=(18, 6))
+    opcoes = [
+        ("1. Cadastrar medicamento", lambda: tela_cadastrar(frame_med, atualizar_contador)),
+        ("2. Listar medicamentos", lambda: tela_listar(frame_med)),
+        ("3. Buscar (nome / categoria)", lambda: tela_buscar(frame_med)),
+        ("4. Alterar medicamento", lambda: tela_alterar(frame_med, atualizar_contador)),
+        ("5. Remover medicamento", lambda: tela_remover(frame_med, atualizar_contador)),
+        ("6. Ordenar por preço", lambda: tela_ordenar(frame_med)),
+    ]
+    
+    for texto, comando in opcoes:
+        _botao(frame_med, texto, comando, width=30).pack(pady=5)
+
+    _botao(
+        frame_med,
+        text="0. Voltar",
+        command=voltar,
+        cor=VERMELHO,
+        hover=VERMELHO_CLARO,
+        width=30
+    ).pack(pady=(18, 6))

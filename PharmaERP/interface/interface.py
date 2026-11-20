@@ -7,7 +7,7 @@ def iniciar_janela():
     janela = tk.Tk()
     janela.title("PharmaERP - Sistema de Controle Farmacêutico")
     janela.geometry("520x430")
-    janela.resizable(False, False)
+    janela.resizable(True, True)
     janela.configure(bg="#121820")
     janela.eval("tk::PlaceWindow . center")
     #tela de boas vindas 
@@ -30,7 +30,7 @@ def iniciar_janela():
         bg="#121820"
     ).pack(pady=(0, 20))
 
-    tk.Frame(tela_boas_vindas, height=1, width=340, bg="#2c3e50").pack(pady=5)
+    tk.Frame(tela_boas_vindas, height=2, width=340, bg="#2c3e50").pack(pady=5)
 
     tk.Label(
         tela_boas_vindas,
@@ -96,8 +96,8 @@ def iniciar_janela():
     tk.Button(
         tela_menu,
         text="1. Menu Medicamentos",
-        command=menu_med, # direciona para o menu de medicamentos
-        **estilo_botao # desempacota o estilo do botão
+        command=lambda: menu_med(janela, tela_menu), # Passa a janela principal e a tela atual
+        **estilo_botao 
     ).pack(pady=6)
 
     tk.Button(

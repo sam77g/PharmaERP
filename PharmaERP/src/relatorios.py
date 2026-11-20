@@ -5,8 +5,23 @@ from collections import deque
 from datetime import datetime
 from .reposicao import cancelar_repo, cadastrar_repo, buscar_repo
 from .estruturas import historico,limpar_tela, medicamentos
-import time
 
+
+# ---------- PALETA (mesma da tela principal) ----------
+BG = "#121820"
+BG_CARD = "#1f2937"
+VERDE = "#2ecc71"
+VERDE_ESCURO = "#27ae60"
+AMARELO = "#f1c40f"
+VERMELHO = "#c0392b"
+VERMELHO_CLARO = "#e74c3c"
+TEXTO = "#ffffff"
+TEXTO_SUAVE = "#bdc3c7"
+
+
+# =====================================================================
+#                              LÓGICA
+# =====================================================================
 
 def DataDeModificacao() :
     agora = datetime.now()
@@ -122,3 +137,10 @@ def desfazer_ultima():
     historico.pop()        
     print(f"Desfeito: {mov['tipo']} de {mov['medicamento']}")
 
+# =====================================================================
+#                              INTERFACE
+# =====================================================================
+
+
+def menu_hist() :
+    print("relatorios")
