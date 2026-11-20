@@ -413,26 +413,34 @@ def tela_alterar(pai, ao_salvar=None):
     c_campo.current(0)
     c_campo.pack(fill="x", padx=30, ipady=3)
 
+    # Rótulo e campos do novo valor criados em sequência para manter a ordem correta
     rotulo = tk.Label(win, text="Nova categoria", font=("Helvetica", 10), fg=TEXTO_SUAVE,
                     bg=BG, anchor="w")
     rotulo.pack(fill="x", padx=30, pady=(10, 2))
+    
     c_valor = ttk.Combobox(win, values=CATEGORIAS, state="readonly", font=("Helvetica", 11))
     c_valor.current(0)
     c_valor.pack(fill="x", padx=30, ipady=3)
+    
     e_valor = tk.Entry(win, font=("Helvetica", 11), bg=BG_CARD, fg=TEXTO,
                     insertbackground=TEXTO, relief="flat")
+    # Como inicia com "Categoria", começamos com o combobox visível e escondemos o entry
+    e_valor.pack_forget()
 
     def trocar_campo(_e=None):
         escolhido = c_campo.get()
         rotulo.config(text="Nova categoria" if escolhido == "Categoria"
                     else f"Novo valor de {escolhido.lower()}")
+        
+        # Reposiciona corretamente logo abaixo do rótulo e ACIMA dos botões
         if escolhido == "Categoria":
             e_valor.pack_forget()
-            c_valor.pack(fill="x", padx=30, ipady=3)
+            c_valor.pack(fill="x", padx=30, ipady=3, after=rotulo)
         else:
             c_valor.pack_forget()
             e_valor.delete(0, "end")
-            e_valor.pack(fill="x", padx=30, ipady=5)
+            e_valor.pack(fill="x", padx=30, ipady=5, after=rotulo)
+            
     c_campo.bind("<<ComboboxSelected>>", trocar_campo)
 
     def voltar():
@@ -455,9 +463,10 @@ def tela_alterar(pai, ao_salvar=None):
         voltar()
 
     win.bind("<Return>", lambda _e: salvar())
+    
+    # Criamos os botões por último para garantir que fiquem sempre embaixo de tudo
     _botao(win, "Salvar", salvar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO).pack(pady=(22, 6))
     _botao(win, "Cancelar", voltar, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
-
 
 def tela_remover(pai, ao_salvar=None):
     win = _abrir_tela_frame(pai, "Remover Medicamento", 400, 280)
