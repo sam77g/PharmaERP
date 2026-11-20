@@ -8,78 +8,8 @@ from .registros import registrar_reposicao
 import time
 
 
-# ===== MENU DE REPOSIÇÃO ====
-def menu_repo():
-    while True :
-        limpar_tela()
-        print(Fore.YELLOW  +"========================================= ")
-        print(Fore.GREEN  +"          MENU DE REPOSIÇÃO            ")
-        print(Fore.YELLOW  +"========================================= \n")
-        print(" [1] - Buscar reposição \n",
-            "[2] - Listar reposições \n",
-            "[3] - Atender reposição \n",
-            "[4] - Cancelar reposição \n",
-            "[5] - Alterar \n",
-            "[0] - Voltar \n")
-        
-        # se digitar letra não quebra, só volta pro menu
-        try:
-            op_repo = int(input("Digite a ação desejada : "))
-        except ValueError:
-            print("Digite apenas números!")
-            time.sleep(1)
-            continue
-        print("-----------------------------------")
-        match op_repo:
-            # 1 - busca pelo nome e mostra se existir
-            case 1 :
-                nome = input("Digite o nome do medicamento : ")
-                repo = buscar_repo(nome)
-                if repo is None:
-                    print(f"\nNenhuma reposição pendente para '{nome}'.")
-                else:
-                    exibir_repo(repo)
-                input(Fore.LIGHTGREEN_EX + "\nPressione ENTER para continuar...")
-
-            # 2 - lista tudo que está na fila
-            case 2:
-                listar_repo()
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
-                
-            # 3 - atende sempre a primeira da fila (FIFO)
-            case 3 :
-                atender_reposicao()
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
-                
-            # 4 - confere se existe antes de cancelar
-            case 4 :
-                
-                nome = input("Digite o nome do medicamento : ")
-                repo = buscar_repo(nome)
-                if repo is None:
-                    print(Fore.LIGHTRED_EX +f"\nNenhuma reposição pendente para '{nome}'.")
-                else:
-                    cancelar_repo(nome)
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
-                
-            # 5 - mesma lógica: só altera se a reposição existir
-            case 5 :
-                nome = input("Digite o nome do medicamento : ")
-                repo = buscar_repo(nome)
-                if repo is None:
-                    print(Fore.LIGHTRED_EX +f"\nNenhuma reposição pendente para '{nome}'.")
-                else:
-                    alterar_repo(nome)
-                input(Fore.LIGHTGREEN_EX +"\nPressione ENTER para continuar...")
-            # 0 - sai do loop e volta pro menu anterior
-            case 0:
-                time.sleep(0.5)
-                break
-
-            # qualquer outro número
-            case _:
-                print(Fore.RED+"Opção inválida!")
-                time.sleep(1)
+def menu_repo() :
+    print()
 
 
 # FUNÇÃO DE BUSCA 
@@ -131,31 +61,7 @@ def cadastrar_repo(med) :
     }
     # INSERE A PRIORIDADE
     inserir_por_prioridade(repor) 
-    print(Fore.LIGHTGREEN_EX +" ===== CRIANDO REPOSIÇÃO ===== ")
-    print(f" Medicamento : {repor["medicamento"].upper()}")
-    match repor["criticidade"] :
-        case "CRÍTICO" :
-            print(Fore.RED + f" Criticidade : {repor['criticidade']} \n")
-        case "ALERTA" :
-            print(Fore.LIGHTRED_EX + f" Criticidade : {repor['criticidade']} \n")
-        case "AVISO" :
-            print(Fore.YELLOW + f" Criticidade : {repor['criticidade']} \n")
 
-
-
-# FUNLÇAO PARA EXIBIR UMA REPOSIÇÃO JÁ ENCONTRADA
-def exibir_repo(repo):
-    print(Fore.LIGHTGREEN_EX +f" ===== REPOSIÇÃO PARA {repo['medicamento'].upper()} =====")
-    print(f"nome : {repo['medicamento']} ")
-    print(f"id de reposição : {repo['id_repo']}")
-    print(f"quantidade solicitada : {repo['quantidade_solicitada']} ")
-    match repo["criticidade"] :
-        case "CRÍTICO" :
-            print(Fore.RED + f"criticidade : {repo['criticidade']} \n")
-        case "ALERTA" :
-            print(Fore.LIGHTRED_EX + f"criticidade : {repo['criticidade']} \n")
-        case "AVISO" :
-            print(Fore.YELLOW + f"criticidade : {repo['criticidade']} \n")
 
 
 # FUNÇÃO PARA LISTAR AS SOLITAÇÕES
@@ -165,12 +71,11 @@ def exibir_repo(repo):
     - O(n) no melhor caso
 """
 def listar_repo():
-    print(Fore.LIGHTGREEN_EX + "=========================== SOLICITAÇÕES DE REPOSIÇÃO ================================== \n")
+    
     if not solicitacoes_reposicao:   # fila vazia
-        print("Nenhuma solicitação de reposição pendente.")
-        return
-    for repo in solicitacoes_reposicao:
-        exibir_repo(repo)
+        return False
+    
+    return solicitacoes_reposicao
         
         
 # função auxiliar 
@@ -198,9 +103,8 @@ def cancelar_repo(med):
     for repo in solicitacoes_reposicao:
         if repo["medicamento"].strip().lower() == nome:
             solicitacoes_reposicao.remove(repo)   # remove pelo objeto, pode estar em qualquer posição
-            print(Fore.GREEN + f"[SUCESS] Reposição de {repo['medicamento'].upper()} removida!")
-            return
-    print(Fore.RED +"[ERROR] Reposição não encontrada")
+            return True
+    return False
             
             
 # ATENDE A PRIMEIRA REPOSIÇÃO DA FILA
@@ -210,24 +114,14 @@ def cancelar_repo(med):
     - O(1) no melhor caso
 """
 
-def atender_reposicao():
+def atender_reposicao(qtd):
     if not solicitacoes_reposicao:
-        print("Fila vazia.")
-        return
+        return None
 
     repo = solicitacoes_reposicao[0]
-    print(f"Próxima da fila: {repo['medicamento'].upper()} ({repo['criticidade']})")
-
-    # Valida a quantidade antes de retirar da fila
-    try:
-        qtd = int(input("Digite a quantidade recebida: "))
-    except ValueError:
-        print("Digite apenas números!")
-        return
 
     if not validar_estoque(qtd) or qtd == 0:
-        print("Quantidade inválida.")
-        return
+        return False
 
     # Procura o medicamento pelo ID
     med = None
@@ -240,13 +134,11 @@ def atender_reposicao():
     # Verifica se o medicamento ainda existe
     if med is None:
         solicitacoes_reposicao.popleft()
-        print("Medicamento não existe mais; solicitação descartada.")
-        return
+        return False
 
     # Registra no histórico antes de alterar o estoque
     if not registrar_reposicao(med, qtd):
-        print("Não foi possível registrar a reposição.")
-        return
+        return False
 
     # Remove a solicitação atendida
     solicitacoes_reposicao.popleft()
@@ -254,32 +146,27 @@ def atender_reposicao():
     # Atualiza o estoque
     med["estoque"] += qtd
 
-    print(f"{med['medicamento'].upper()}: estoque agora é {med['estoque']}")
 
     # Se continuar abaixo do mínimo, cria outra solicitação
     if med["estoque"] < 15:
-        print("Ainda abaixo do mínimo; nova solicitação criada.")
         cadastrar_repo(med)
 
-            
+
 # ALTERA A QUANTIDADE SOLICITADA DE UMA REPOSIÇÃO
 """
     COMPLEXIDADE 
     - O(n) no pior caso
     - O(1) no melhor caso
 """
-def alterar_repo(nome):
+def alterar_repo(nome, qtd):
     repo = buscar_repo(nome)
     if repo is None:
-        print("Reposição não encontrada"); return
-    try:
-        qtd = int(input("Nova quantidade solicitada : "))
-    except ValueError:
-        print("Digite apenas números!"); return
+        return False
+    
     if not validar_estoque(qtd) :    # não aceita 0 nem negativo
-        print("A quantidade deve ser maior que 0."); return
+        return False
     repo["quantidade_solicitada"] = qtd   # repo é a referência da fila, então já atualiza lá
-    print("Quantidade solicitada alterada!")
+    return True
 
 # FUNÇÃO PARA ATUALIZAR A REPOSIÇAO
 def atualizar_repo(med):

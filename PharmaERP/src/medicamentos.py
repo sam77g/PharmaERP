@@ -11,6 +11,8 @@ from .validar import (
     validar_nome,
     validar_preco,
     validar_categoria,
+    ler_float,
+    ler_int
 )
 from .estruturas import medicamentos
 from .registros import entrada, registrar_remocao, registrar_alteracao
@@ -56,8 +58,8 @@ def _to_float(texto):
 def cadastrar_medicamento(nome, categoria, estoque, preco):
     nome = str(nome).strip()
     categoria = str(categoria).strip().upper()
-    estoque = _to_int(estoque)
-    preco = _to_float(preco)
+    estoque = ler_int(estoque)
+    preco = ler_float(preco)
 
     if not validar_nome(nome, medicamentos):
         return False, "Nome inválido ou já cadastrado."
