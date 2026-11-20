@@ -1,350 +1,520 @@
-# Este arquivo será responsável pelo CRUD - LISTA
-# Aqui ficará as funções de adicionar, ler, deletar e atualizar os medicamentos
-# ex. de funções : 
-# cadastrar_medicamento()
-# listar_medicamentos()
-# buscar_medicamento()
-# alterar_medicamento()
-# remover_medicamento()
-# Também terá algumas validações
+# medicamentos.py — CRUD da LISTA de medicamentos + MENU TKINTER
+# Lógica (cadastrar, listar, buscar, alterar, remover, ordenar) fica separada da interface:
+# as funções de lógica recebem valores já digitados e retornam True/False (nunca usam input/print).
+import math
+import tkinter as tk
+from tkinter import messagebox, ttk
+
 from .validar import (
     validar_medicamento,
     validar_estoque,
     validar_nome,
     validar_preco,
-    validar_categoria
+    validar_categoria,
 )
 from .estruturas import medicamentos
 from .registros import entrada, registrar_remocao, registrar_alteracao
-from .reposicao import cadastrar_repo, buscar_repo, cancelar_repo
+from .reposicao import cadastrar_repo, buscar_repo, cancelar_repo, atualizar_repo
 from .estoque import gerar_id
-import tkinter as tk
-from tkinter import messagebox, simpledialog
 
-def iniciar_menu_med() :
-    janela_menu = Tk.Toplevel()
-    janela_menu.title("PharmaERP - Menu Medicamentos")
-    janela_menu.geometry("520x430")
-    janela_menu.resizable(False, False)
-    janela_menu.configure(bg="#121820")
-    janela_menu.eval("tk::PlaceWindow . center")
-    #tela de boas vindas 
-    tela_boas_vindas = tk.Frame(janela, bg="#121820")
-    tela_boas_vindas.pack(fill="both", expand=True)
-    
-    tk.Button(
-        janela_menu,
-        text="Entrar no Sistema",
-        font=("Helvetica", 12, "bold"),
-        fg="#121820",
-        bg="#2ecc71",
-        activebackground="#27ae60",
-        activeforeground="#ffffff",
-        relief="flat",
-        cursor="hand2",
-        padx=28,
-        pady=12,
-        command=menu_med
-    ).pack(pady=15)
+CATEGORIAS = ["ÉTICO", "GENÉRICO", "SIMILAR"]
+ESTOQUE_MINIMO = 15
+
+# ---------- PALETA (mesma da tela principal) ----------
+BG = "#121820"
+BG_CARD = "#1f2937"
+VERDE = "#2ecc71"
+VERDE_ESCURO = "#27ae60"
+AMARELO = "#f1c40f"
+VERMELHO = "#c0392b"
+VERMELHO_CLARO = "#e74c3c"
+TEXTO = "#ffffff"
+TEXTO_SUAVE = "#bdc3c7"
 
 
-# MENU DE MEDICAMENTOS
-def menu_med(valor) :
-# adicionar medicamento
+# =====================================================================
+#                              LÓGICA
+# =====================================================================
 
-# ALTERAÇÃO DE MEDICAMENTO
-    if len(medicamentos) == 1 :
-        nome = medicamentos[0]["medicamento"]
-        alterar_medicamento(nome)
-    else :
-        alterar_medicamento(alt) # redireciona para a função de alteração
-    
-    time.sleep(1)
+# CONVERSORES (texto digitado -> número, sem quebrar)
+def _to_int(texto):
+    try:
+        return int(str(texto).strip())
+    except ValueError:
+        return None
 
-# REMOÇÃO DE MEDICAMENTO
-    if len(medicamentos) == 1 :
-        nome = medicamentos[0]["medicamento"]
-        remover_medicamento(nome) # redireciona para a função de remoção
-    else :
-        rem_label = tk.Label(janela_menu, text="Digite o medicamento :")
-        rem_label.pack()
-        
-        rem_entry = tk.Entry(janela_menu)
-        rem_entry.pack()    
-        
-        remover_medicamento(rem_entry) # redireciona para a função de remoção
-        time.sleep(1)
-        
-    
-# LISTA TODOS OS MEDICAMENTOS CADASTRADOS
-    listar_medicamentos() # chamada da função de listagem
 
-# BUSCA DE MEDICAMENTO
-    if len(medicamentos) == 1 :
-        nome = medicamentos[0]["medicamento"]
-        buscar_medicamento(nome) # chamada da função de busca
-    else :
-        buscar_medicamento(busca) # chamada da função de busca
-        
-    
+def _to_float(texto):
+    try:
+        valor = float(str(texto).strip().replace(",", "."))
+    except ValueError:
+        return None
+    return valor if math.isfinite(valor) else None
 
-# LISTAGEM/BUSCA FILTRADA
-    opc_busca_categoria = categoria() # recebe o valor para filtragem
-    buscar_medicamento_cat(opc_busca_categoria) # lista pela categoria
-    
 
-# LISTAGEM ORDENADA POR PREÇO
-    for i in ordenar_por_preco(medicamentos): # percorre e ordena os medicamentos
-        # printa no terminal
-        print(f"{i['medicamento'].upper()} - R$ {i['preco']} (estoque: {i['estoque']})")
-        
-    
-    
-# SAÍDA
-    break
+# CADASTRO — retorna (True, "") ou (False, "motivo")
+def cadastrar_medicamento(nome, categoria, estoque, preco):
+    nome = str(nome).strip()
+    categoria = str(categoria).strip().upper()
+    estoque = _to_int(estoque)
+    preco = _to_float(preco)
 
-# VALOR INVÁLIDO 
-    return False
+    if not validar_nome(nome, medicamentos):
+        return False, "Nome inválido ou já cadastrado."
+    if not validar_categoria(categoria):
+        return False, "Categoria inválida."
+    if estoque is None or not validar_estoque(estoque):
+        return False, "Estoque deve ser um número inteiro maior ou igual a 0."
+    if preco is None or not validar_preco(preco):
+        return False, "Preço deve ser um número maior ou igual a 0."
 
-janela_menu.mainloop()
-
-def menu_medicamentos() :   
-    print("menu medicamentos")
-
-# FUNÇÃO PARA LIMPAR TELA
-def limpar_tela():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-# FUNÇÃO PARA CATEGORIAS
-def categoria(valor) :
-    while True:
-        if ler_int(valor) :
-            op = valor
-            if op == 1: return "ÉTICO"
-            if op == 2: return "GENÉRICO"
-            if op == 3: return "SIMILAR"
-        return False
-
-# FUNÇAO DE CADASTRO DE MEDICAMENTOS
-def cadastrar_medicamento():
-    
-    # ENTRADA DE NOME
-    nome_label = tk.Label(janela_menu, text="Digite o nome do medicamento:")
-    nome_label.pack()
-    
-    nome_entry = tk.Entry(janela_menu)
-    nome_entry.pack()
-    
-    if not validar_nome(nome, medicamentos) :
-        messagebox.showerror("NOME INVÁLIDO", "Nome digitado inválido !")
-        return False
-    
-    # ENTRADA DE ESTOQUE
-    estoque_label = tk.Label(janela_menu, text="Digite o estoque:")
-    estoque_label.pack()
-    
-    estoque_entry = tk.Entry(janela_menu)
-    estoque_entry.pack()
-    
-    if not validar_estoque(estoque_entry) :
-        messagebox.showerror("ESTOQUE INVÁLIDO", "Estoque digitado inválido !")
-        return False
-    
-    #  ENTRADA DE PREÇO
-    preco_label = tk.Label(janela_menu, text="Digite o preço :")
-    preco_label.pack()
-    
-    preco_entry = tk.Entry(janela_menu)
-    preco_entry.pack()
-    
-    if not validar_preco(preco_entry) :
-        messagebox.showerror("PREÇO INVÁLIDO", "Preço digitado inválido !")
-        return False
-    
-    
-    # dicionário do medicamento
     medicamento = {
         "medicamento": nome,
-        "categoria": categoria(),
+        "categoria": categoria,
         "estoque": estoque,
-        "preco": preco, # valida e adiciona o preço
-        "id": gerar_id() # gera um ID único para o medicamento 
+        "preco": preco,
+        "id": gerar_id(),
     }
-    
-    # VALIDA OS DADOS DO MEDICAMENTO
-    resultado = validar_medicamento(
-        medicamento,
-        medicamentos
-    )
-    
-    if resultado is True:
-        # CADASTRA O MEDICAMENTO
-        cadastrar_medicamento(medicamento)
-        # VERIFICA SE O ESTOQUE ESTÁ ABAIXO DO MÍNIMO [15]
-        if medicamento["estoque"] < 15:
-            cadastrar_repo(medicamento)                    
-    else:
-        return False
-    
+
     if validar_medicamento(medicamento, medicamentos) is not True:
-        return False
+        return False, "Dados do medicamento inválidos."
 
     medicamentos.append(medicamento)
     entrada(medicamento)
-    return True
+
+    # estoque abaixo do mínimo -> abre solicitação de reposição
+    if medicamento["estoque"] < ESTOQUE_MINIMO:
+        cadastrar_repo(medicamento)
+    return True, ""
 
 
-# FUNÇAO DE LISTAR TODOS OS MEDICAMENTOS
-def listar_medicamentos() :
-    
-    if len(medicamentos) == 0 : 
-        return False
-    else :
-        return medicamentos
-        
+# LISTAR TODOS — retorna a lista (vazia se não houver nenhum)
+def listar_medicamentos():
+    return medicamentos
 
 
-# FUNÇÃO DE BUSCAR MEDICAMENTOS POR CATEGORIA
-""" 
-Complexidade O(n)
-"""
+# BUSCA POR CATEGORIA — O(n)
 def buscar_medicamento_cat(categoria_nome):
-    # filtra todos os medicamentos da mesma categoria
-    # Equivale a :
-    # encontrados = [
-    #     # percorre a lista de medicamentos 
-    #     m for m in medicamentos 
-    #     # e guarda os correspondedes em uma lista nova
-    #     if m["categoria"].strip().lower() == categoria_nome.strip().lower()
-    # ]
-    
-    if not isinstance(categoria_nome, str): # valida
+    if not isinstance(categoria_nome, str):
         return []
 
     categoria_nome = categoria_nome.strip().lower()
     encontrados = []
-
-    for medicamento in medicamentos: # busca
-        if medicamento["categoria"].strip().lower() == categoria_nome: # compara
-            encontrados.append(medicamento) # adiciona na lista
-
+    for medicamento in medicamentos:
+        if medicamento["categoria"].strip().lower() == categoria_nome:
+            encontrados.append(medicamento)
     return encontrados
 
-# FUNÇÃO DE BUSCAR MEDICAMENTOS PELO NOME
-# Complexidade :
-# O(1) no melhor caso 
-# O(n) no pior caso
+
+# BUSCA POR NOME — O(1) melhor caso / O(n) pior caso
 def buscar_medicamento(nome):
     if not isinstance(nome, str) or not nome.strip():
         return None
 
     nome = nome.strip().lower()
-
     for medicamento in medicamentos:
         if medicamento["medicamento"].strip().lower() == nome:
             return medicamento
-
     return None
 
-    
-# função de alterar características do medicamento através do nome digitado
-def alterar_medicamento(nome, campo, novo_valor) :
-    nome = nome.strip().lower() # normalizando o nome
-        
-    for medicamento in medicamentos: # percorre a lista de medicamentos
-        if medicamento["medicamento"].strip().lower() == nome: # verifica se o nome digitado está presente na lista
-            opcao = campo
-            match opcao :
-                
-                # ALTERAR CATEGORIA
-                case 1 :
-                    nova_categoria = categoria(novo_valor)
-                    if validar_categoria(nova_categoria) :
-                        
-                        if registrar_alteracao(medicamento, "categoria") :
-                            medicamento["categoria"] = nova_categoria # altera a categoria do medicamento
-                            return True
-                        
-                    return False
-                
-                # ALTERAR ESTOQUE
-                case 2 :
-                    nova_quantidade = ler_int(novo_valor)
-                    if not validar_estoque(nova_quantidade): # valida o valor digitado
-                        return False
-                    
-                    if not registrar_alteracao(medicamento, "estoque") :
-                        return False
-                    
-                    medicamento["estoque"] = nova_quantidade
-                    
-                    # Função para verificar se há reposição e atualizar ela ou não
-                    atualizar_repo(medicamento)
-                    
-                    return True
-                
-                # ALTERAR PREÇO
-                case 3 :
-                    novo_preco = ler_float(novo_valor)
-                    if not validar_preco(novo_preco):
-                        return False
 
-                    if not registrar_alteracao(medicamento, "preco"):
-                        return False
+# ALTERAR — campo: 1 = categoria, 2 = estoque, 3 = preço
+def alterar_medicamento(nome, campo, novo_valor):
+    medicamento = buscar_medicamento(nome)
+    if medicamento is None:
+        return False
 
-                    medicamento["preco"] = novo_preco
-                    return True
-                
-                # OPÇÃO INVÁLIDA
-                case _:
-                    return False
-                
-    return False
+    match campo:
+        # ALTERAR CATEGORIA
+        case 1:
+            nova_categoria = str(novo_valor).strip().upper()
+            if not validar_categoria(nova_categoria):
+                return False
+            if not registrar_alteracao(medicamento, "categoria"):
+                return False
+            medicamento["categoria"] = nova_categoria
+            return True
+
+        # ALTERAR ESTOQUE
+        case 2:
+            nova_quantidade = _to_int(novo_valor)
+            if nova_quantidade is None or not validar_estoque(nova_quantidade):
+                return False
+            if not registrar_alteracao(medicamento, "estoque"):
+                return False
+            medicamento["estoque"] = nova_quantidade
+            atualizar_repo(medicamento)  # cria/atualiza/cancela a reposição conforme o estoque
+            return True
+
+        # ALTERAR PREÇO
+        case 3:
+            novo_preco = _to_float(novo_valor)
+            if novo_preco is None or not validar_preco(novo_preco):
+                return False
+            if not registrar_alteracao(medicamento, "preco"):
+                return False
+            medicamento["preco"] = novo_preco
+            return True
+
+        case _:
+            return False
 
 
-# FUNÇÃO PARA REMOVER UM MEDICAMENTO
+# REMOVER
 def remover_medicamento(nome):
     medicamento = buscar_medicamento(nome)
-    nome = nome.strip().lower() # trata o nome para as comparações
-    
-    if medicamento is None :
+    if medicamento is None:
         return False
-    
-    
-    # Registra e remove o medicamento
-    if not registrar_remocao(nome) :
-        return False
-    
-    # busca se há solicitações de reposições para o medicamento
-    if buscar_repo(medicamento) is not None :
-        cancelar_repo(medicamento)  # limpa o pedido de reposição pendente
-        
-    return True
 
-# FUNÇÃO PARA ORDENAR POR PREÇO
-## Alterar para uma ordenação própria/personalizada
+    # cancela a reposição pendente antes de remover (o histórico guarda os dados)
+    if buscar_repo(medicamento) is not None:
+        cancelar_repo(medicamento)
+
+    return registrar_remocao(medicamento) is True  # registra no histórico e remove da lista
+
+
+# ORDENAR POR PREÇO (Bubble Sort, menor -> maior). Retorna nova lista.
 def ordenar_por_preco(lista):
-    """
-    Ordena uma lista de dicionários pelo campo "preco" (do menor para o maior)
-    usando Bubble Sort. Retorna uma nova lista, sem alterar a original.
-    """
-    v = lista.copy()  # cópia da lista: evita modificar a lista original
-
-    # Cada passada do loop externo "empurra" o maior elemento restante para o final
+    v = lista.copy()
     for i in range(len(v)):
-        trocou = False  # flag para detectar se houve alguma troca nesta passada
-
-        # Bubble Sort: compara pares de elementos vizinhos
-        # O "- i" ignora os últimos i elementos, que já estão na posição correta
-        # O "- 1" evita estourar o índice ao acessar v[j+1]
+        trocou = False
         for j in range(len(v) - i - 1):
-            # Se o preço atual for maior que o do próximo, estão fora de ordem
             if v[j]["preco"] > v[j + 1]["preco"]:
-                v[j], v[j + 1] = v[j + 1], v[j]  # troca os dois de posição
-                trocou = True  # registra que houve troca
-
-        # Se nenhuma troca ocorreu, a lista já está ordenada: encerra antecipadamente
+                v[j], v[j + 1] = v[j + 1], v[j]
+                trocou = True
         if not trocou:
             break
+    return v
 
-    return v  # retorna a lista ordenada
+
+# =====================================================================
+#                            INTERFACE TKINTER
+# =====================================================================
+
+def _botao(pai, texto, comando, cor=BG_CARD, hover=VERDE, fg_hover=BG, width=26):
+    btn = tk.Button(
+        pai, text=texto, command=comando,
+        font=("Helvetica", 11, "bold"), width=width, pady=7,
+        relief="flat", cursor="hand2", fg=TEXTO, bg=cor,
+        activebackground=hover, activeforeground=fg_hover,
+    )
+    return btn
+
+
+def _estilizar_tabela():
+    estilo = ttk.Style()
+    estilo.theme_use("clam")
+    estilo.configure(
+        "Pharma.Treeview", background=BG_CARD, fieldbackground=BG_CARD,
+        foreground=TEXTO, rowheight=26, borderwidth=0, font=("Helvetica", 10),
+    )
+    estilo.configure(
+        "Pharma.Treeview.Heading", background=BG, foreground=AMARELO,
+        font=("Helvetica", 10, "bold"), relief="flat",
+    )
+    estilo.map("Pharma.Treeview", background=[("selected", VERDE_ESCURO)],
+            foreground=[("selected", TEXTO)])
+
+
+def _tabela(pai, altura=12):
+    """Cria uma Treeview com scrollbar e retorna (frame, tree)."""
+    _estilizar_tabela()
+    frame = tk.Frame(pai, bg=BG)
+    colunas = ("id", "nome", "categoria", "estoque", "preco")
+    tree = ttk.Treeview(frame, columns=colunas, show="headings",
+                        height=altura, style="Pharma.Treeview")
+    cabecalhos = {"id": ("ID", 50), "nome": ("Medicamento", 230),
+                "categoria": ("Categoria", 110), "estoque": ("Estoque", 80),
+                "preco": ("Preço (R$)", 100)}
+    for col, (titulo, largura) in cabecalhos.items():
+        tree.heading(col, text=titulo)
+        tree.column(col, width=largura, anchor="center" if col != "nome" else "w")
+
+    scroll = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+    tree.configure(yscrollcommand=scroll.set)
+    tree.pack(side="left", fill="both", expand=True)
+    scroll.pack(side="right", fill="y")
+    tree.tag_configure("baixo", foreground="#ff7675")  # estoque abaixo do mínimo
+    return frame, tree
+
+
+def _preencher(tree, lista):
+    tree.delete(*tree.get_children())
+    for m in lista:
+        tag = ("baixo",) if m["estoque"] < ESTOQUE_MINIMO else ()
+        tree.insert("", "end", values=(
+            m["id"], m["medicamento"], m["categoria"], m["estoque"], f"{m['preco']:.2f}"
+        ), tags=tag)
+
+
+def _janela_filha(pai, titulo, largura, altura):
+    win = tk.Toplevel(pai)
+    win.title(titulo)
+    win.geometry(f"{largura}x{altura}")
+    win.configure(bg=BG)
+    win.resizable(False, False)
+    win.transient(pai)
+    win.grab_set()  # modal: foco só nesta janela até fechar
+    return win
+
+
+def _campo(pai, rotulo, **opts):
+    tk.Label(pai, text=rotulo, font=("Helvetica", 10), fg=TEXTO_SUAVE, bg=BG,
+            anchor="w").pack(fill="x", padx=30, pady=(10, 2))
+    entry = tk.Entry(pai, font=("Helvetica", 11), bg=BG_CARD, fg=TEXTO,
+                     insertbackground=TEXTO, relief="flat", **opts)
+    entry.pack(fill="x", padx=30, ipady=5)
+    return entry
+
+
+def _combo_categoria(pai, rotulo="Categoria"):
+    tk.Label(pai, text=rotulo, font=("Helvetica", 10), fg=TEXTO_SUAVE, bg=BG,
+            anchor="w").pack(fill="x", padx=30, pady=(10, 2))
+    combo = ttk.Combobox(pai, values=CATEGORIAS, state="readonly", font=("Helvetica", 11))
+    combo.current(0)
+    combo.pack(fill="x", padx=30, ipady=3)
+    return combo
+
+
+def _titulo(pai, texto):
+    tk.Label(pai, text=texto, font=("Helvetica", 16, "bold"), fg=VERDE, bg=BG).pack(pady=(18, 4))
+
+
+# ---------------------------- TELAS ----------------------------
+
+def tela_cadastrar(pai, ao_salvar=None):
+    win = _janela_filha(pai, "Cadastrar Medicamento", 400, 440)
+    _titulo(win, "Cadastrar Medicamento")
+
+    e_nome = _campo(win, "Nome do medicamento")
+    c_cat = _combo_categoria(win)
+    e_estoque = _campo(win, "Estoque")
+    e_preco = _campo(win, "Preço (R$)")
+    e_nome.focus_set()
+
+    def salvar():
+        ok, erro = cadastrar_medicamento(e_nome.get(), c_cat.get(),
+                                        e_estoque.get(), e_preco.get())
+        if not ok:
+            messagebox.showerror("Erro ao cadastrar", erro, parent=win)
+            return
+        msg = "Medicamento cadastrado com sucesso!"
+        if buscar_repo(e_nome.get()) is not None:
+            msg += "\nEstoque abaixo do mínimo: reposição solicitada."
+        messagebox.showinfo("Sucesso", msg, parent=win)
+        if ao_salvar:
+            ao_salvar()
+        win.destroy()
+
+    win.bind("<Return>", lambda _e: salvar())
+    _botao(win, "Salvar", salvar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO).pack(pady=(22, 6))
+    _botao(win, "Cancelar", win.destroy, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
+
+
+def tela_listar(pai):
+    win = _janela_filha(pai, "Medicamentos Cadastrados", 640, 470)
+    _titulo(win, "Medicamentos Cadastrados")
+
+    frame, tree = _tabela(win)
+    frame.pack(fill="both", expand=True, padx=20, pady=5)
+    _preencher(tree, listar_medicamentos())
+
+    tk.Label(win, text=f"Total: {len(medicamentos)}   |   Vermelho = abaixo de {ESTOQUE_MINIMO} un.",
+            font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG).pack(pady=4)
+    _botao(win, "Fechar", win.destroy, width=14).pack(pady=(2, 12))
+
+
+def tela_buscar(pai):
+    win = _janela_filha(pai, "Buscar Medicamento", 640, 500)
+    _titulo(win, "Buscar Medicamento")
+
+    barra = tk.Frame(win, bg=BG)
+    barra.pack(fill="x", padx=20, pady=5)
+
+    modo = tk.StringVar(value="nome")
+    for texto, valor in (("Por nome", "nome"), ("Por categoria", "categoria")):
+        tk.Radiobutton(barra, text=texto, variable=modo, value=valor, bg=BG, fg=TEXTO,
+                    selectcolor=BG_CARD, activebackground=BG, activeforeground=VERDE,
+                    font=("Helvetica", 10)).pack(side="left", padx=(0, 12))
+
+    e_busca = tk.Entry(barra, font=("Helvetica", 11), bg=BG_CARD, fg=TEXTO,
+                    insertbackground=TEXTO, relief="flat", width=18)
+    e_busca.pack(side="left", ipady=4, padx=4)
+    combo = ttk.Combobox(barra, values=CATEGORIAS, state="readonly", width=12,
+                        font=("Helvetica", 10))
+    combo.current(0)
+
+    def trocar_modo(*_):
+        if modo.get() == "nome":
+            combo.pack_forget()
+            e_busca.pack(side="left", ipady=4, padx=4)
+        else:
+            e_busca.pack_forget()
+            combo.pack(side="left", ipady=3, padx=4)
+    modo.trace_add("write", trocar_modo)
+
+    frame, tree = _tabela(win, altura=10)
+    frame.pack(fill="both", expand=True, padx=20, pady=5)
+
+    def buscar():
+        if modo.get() == "nome":
+            if not e_busca.get().strip():
+                messagebox.showwarning("Atenção", "Digite o nome do medicamento.", parent=win)
+                return
+            med = buscar_medicamento(e_busca.get())
+            resultado = [med] if med else []
+        else:
+            resultado = buscar_medicamento_cat(combo.get())
+        _preencher(tree, resultado)
+        if not resultado:
+            messagebox.showinfo("Busca", "Nenhum medicamento encontrado.", parent=win)
+
+    win.bind("<Return>", lambda _e: buscar())
+    _botao(barra, "Buscar", buscar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO, width=9).pack(side="left", padx=6)
+    e_busca.focus_set()
+    _botao(win, "Fechar", win.destroy, width=14).pack(pady=(2, 12))
+
+
+def tela_alterar(pai, ao_salvar=None):
+    win = _janela_filha(pai, "Alterar Medicamento", 400, 440)
+    _titulo(win, "Alterar Medicamento")
+
+    e_nome = _campo(win, "Nome do medicamento")
+    e_nome.focus_set()
+
+    tk.Label(win, text="Campo a alterar", font=("Helvetica", 10), fg=TEXTO_SUAVE, bg=BG,
+            anchor="w").pack(fill="x", padx=30, pady=(10, 2))
+    campos = {"Categoria": 1, "Estoque": 2, "Preço": 3}
+    c_campo = ttk.Combobox(win, values=list(campos), state="readonly", font=("Helvetica", 11))
+    c_campo.current(0)
+    c_campo.pack(fill="x", padx=30, ipady=3)
+
+    # novo valor: combobox (categoria) ou entry (estoque/preço)
+    rotulo = tk.Label(win, text="Nova categoria", font=("Helvetica", 10), fg=TEXTO_SUAVE,
+                    bg=BG, anchor="w")
+    rotulo.pack(fill="x", padx=30, pady=(10, 2))
+    c_valor = ttk.Combobox(win, values=CATEGORIAS, state="readonly", font=("Helvetica", 11))
+    c_valor.current(0)
+    c_valor.pack(fill="x", padx=30, ipady=3)
+    e_valor = tk.Entry(win, font=("Helvetica", 11), bg=BG_CARD, fg=TEXTO,
+                    insertbackground=TEXTO, relief="flat")
+
+    def trocar_campo(_e=None):
+        escolhido = c_campo.get()
+        rotulo.config(text="Nova categoria" if escolhido == "Categoria"
+                    else f"Novo valor de {escolhido.lower()}")
+        if escolhido == "Categoria":
+            e_valor.pack_forget()
+            c_valor.pack(fill="x", padx=30, ipady=3)
+        else:
+            c_valor.pack_forget()
+            e_valor.delete(0, "end")
+            e_valor.pack(fill="x", padx=30, ipady=5)
+    c_campo.bind("<<ComboboxSelected>>", trocar_campo)
+
+    def salvar():
+        nome = e_nome.get()
+        if buscar_medicamento(nome) is None:
+            messagebox.showerror("Erro", "Medicamento não encontrado.", parent=win)
+            return
+        campo = campos[c_campo.get()]
+        valor = c_valor.get() if campo == 1 else e_valor.get()
+        if not alterar_medicamento(nome, campo, valor):
+            messagebox.showerror("Erro", "Valor inválido.", parent=win)
+            return
+        messagebox.showinfo("Sucesso", "Medicamento alterado com sucesso!", parent=win)
+        if ao_salvar:
+            ao_salvar()
+        win.destroy()
+
+    win.bind("<Return>", lambda _e: salvar())
+    _botao(win, "Salvar", salvar, cor=VERDE, hover=VERDE_ESCURO, fg_hover=TEXTO).pack(pady=(22, 6))
+    _botao(win, "Cancelar", win.destroy, cor=VERMELHO, hover=VERMELHO_CLARO).pack()
+
+
+def tela_remover(pai, ao_salvar=None):
+    win = _janela_filha(pai, "Remover Medicamento", 400, 280)
+    _titulo(win, "Remover Medicamento")
+
+    e_nome = _campo(win, "Nome do medicamento")
+    e_nome.focus_set()
+
+    def remover():
+        nome = e_nome.get()
+        med = buscar_medicamento(nome)
+        if med is None:
+            messagebox.showerror("Erro", "Medicamento não encontrado.", parent=win)
+            return
+        if not messagebox.askyesno(
+            "Confirmar remoção",
+            f"Remover '{med['medicamento']}' do sistema?\n(Reposição pendente também será cancelada.)",
+            parent=win,
+        ):
+            return
+        if remover_medicamento(nome):
+            messagebox.showinfo("Sucesso", "Medicamento removido!", parent=win)
+            if ao_salvar:
+                ao_salvar()
+            win.destroy()
+        else:
+            messagebox.showerror("Erro", "Não foi possível remover.", parent=win)
+
+    win.bind("<Return>", lambda _e: remover())
+    _botao(win, "Remover", remover, cor=VERMELHO, hover=VERMELHO_CLARO).pack(pady=(22, 6))
+    _botao(win, "Cancelar", win.destroy).pack()
+
+
+def tela_ordenar(pai):
+    win = _janela_filha(pai, "Ordenados por Preço", 640, 470)
+    _titulo(win, "Medicamentos por Preço (menor → maior)")
+
+    frame, tree = _tabela(win)
+    frame.pack(fill="both", expand=True, padx=20, pady=5)
+    _preencher(tree, ordenar_por_preco(medicamentos))
+
+    _botao(win, "Fechar", win.destroy, width=14).pack(pady=(8, 12))
+
+
+# ---------------------------- MENU ----------------------------
+
+def menu_med():
+    """Abre o menu de medicamentos (chamado pelo botão da tela principal)."""
+    raiz = tk._default_root
+    janela = tk.Toplevel(raiz)
+    janela.title("PharmaERP - Menu Medicamentos")
+    janela.geometry("520x590")
+    janela.resizable(False, False)
+    janela.configure(bg=BG)
+    janela.transient(raiz)
+
+    # centraliza em relação à janela principal
+    janela.update_idletasks()
+    x = raiz.winfo_x() + (raiz.winfo_width() - 520) // 2
+    y = raiz.winfo_y() + (raiz.winfo_height() - 590) // 2
+    janela.geometry(f"+{max(x, 0)}+{max(y, 0)}")
+
+    tk.Label(janela, text="Medicamentos", font=("Helvetica", 22, "bold"),
+            fg=VERDE, bg=BG).pack(pady=(25, 2))
+    tk.Label(janela, text="Menu de Medicamentos", font=("Helvetica", 11),
+            fg=AMARELO, bg=BG).pack(pady=(0, 14))
+
+    contador = tk.Label(janela, font=("Helvetica", 9), fg=TEXTO_SUAVE, bg=BG)
+    contador.pack(pady=(0, 10))
+
+    def atualizar_contador():
+        contador.config(text=f"{len(medicamentos)} medicamento(s) cadastrado(s)")
+    atualizar_contador()
+
+    opcoes = [
+        ("1. Cadastrar medicamento", lambda: tela_cadastrar(janela, atualizar_contador)),
+        ("2. Listar medicamentos", lambda: tela_listar(janela)),
+        ("3. Buscar (nome / categoria)", lambda: tela_buscar(janela)),
+        ("4. Alterar medicamento", lambda: tela_alterar(janela, atualizar_contador)),
+        ("5. Remover medicamento", lambda: tela_remover(janela, atualizar_contador)),
+        ("6. Ordenar por preço", lambda: tela_ordenar(janela)),
+    ]
+    for texto, comando in opcoes:
+        _botao(janela, texto, comando, width=30).pack(pady=5)
+
+    _botao(janela, "0. Voltar", janela.destroy, cor=VERMELHO, hover=VERMELHO_CLARO,
+        width=30).pack(pady=(18, 6))
