@@ -3,7 +3,7 @@
 # consultas e relatórios
 from collections import deque 
 from datetime import datetime
-from .reposicao import cancelar_repo, cadastrar_repo, buscar_repo
+from .reposicao import cancelar_repo, cadastrar_repo, buscar_repo, atualizar_repo
 from .estruturas import historico,limpar_tela, medicamentos
 import tkinter as tk
 from tkinter import messagebox, ttk
@@ -31,42 +31,10 @@ def DataDeModificacao() :
     return data_formatada
 
 
-# FUNÇÃO PARA LISTAR O HISTÓRICO
-def listar_historico():
-    limpar_tela()
-
-    for i in reversed(historico):
-        print(Fore.GREEN + f"==================== {i['medicamento'].upper()} ({i['tipo']}) =======================\n")
-
-        print(f"ID : {i['id_medicamento']}")
-        print(f"Data : {i['data']}")
-
-        match i["tipo"]:
-            case "ALTERAÇÃO":
-                campo = i["campo_alterado"]
-
-                print(f"Campo alterado : {campo}")
-                print(f"Valor anterior : {i['dados'][campo]}")
-
-            case "ENTRADA" | "SAÍDA" | "REMOÇÃO":
-                print(f"Categoria : {i['dados']['categoria']}")
-                print(f"Estoque : {i['dados']['estoque']}")
-                print(f"Preço : R$ {i['dados']['preco']:.2f}")
-            
-            case "REPOSIÇÃO":
-                estoque_anterior = i["dados"]["estoque"]
-                quantidade = i["quantidade_recebida"]
-
-                print(f"Estoque anterior : {estoque_anterior}")
-                print(f"Quantidade recebida : {quantidade}")
-                print(f"Estoque posterior : {estoque_anterior + quantidade}")
-
-        print("\n")
         
 # FUNÇÃO PARA DESFAZER A ULTIMA AÇÃO NO HISTÓRICO
 def desfazer_ultima():
     if not historico:
-        print(Fore.LIGHTRED_EX +"Nada para desfazer.")
         return
     mov = historico[-1]
     
@@ -129,15 +97,11 @@ def desfazer_ultima():
             # Recupera o estoque anterior à reposição
             med["estoque"] = mov["dados"]["estoque"]
 
-            # Reconstrói a solicitação de reposição, se necessário
-            if med["estoque"] < 15:
-                if buscar_repo(med) is None:
-                    cadastrar_repo(med)
-            else:
-                if buscar_repo(med) is not None:
-                    cancelar_repo(med)
-    historico.pop()        
-    print(f"Desfeito: {mov['tipo']} de {mov['medicamento']}")
+            # Atualiza a solicitação de reposição
+            atualizar_repo(med)
+                    
+            historico.pop()        
+    
 
 # =====================================================================
 #                            INTERFACE TKINTER
@@ -165,7 +129,7 @@ def _estilizar_tabela():
         font=("Helvetica", 10, "bold"), relief="flat",
     )
     estilo.map("PharmaHist.Treeview", background=[("selected", VERDE_ESCURO)],
-               foreground=[("selected", TEXTO)])
+            foreground=[("selected", TEXTO)])
 
 
 def _tabela_historico(pai, altura=12):
@@ -261,14 +225,14 @@ def tela_desfazer_acao(pai, ao_atualizar=None):
     if historico:
         ult = historico[-1]
         texto_info = (f"Última ação registrada:\n"
-                      f"• Tipo: {ult['tipo']}\n"
-                      f"• Medicamento: {ult['medicamento']}\n"
-                      f"• Data/Hora: {ult['data']}")
+                    f"• Tipo: {ult['tipo']}\n"
+                    f"• Medicamento: {ult['medicamento']}\n"
+                    f"• Data/Hora: {ult['data']}")
     else:
         texto_info = "O histórico está vazio. Nenhuma ação para desfazer."
 
     tk.Label(info_frame, text=texto_info, font=("Helvetica", 11), fg=TEXTO, bg=BG_CARD,
-             justify="left", padx=15, pady=15).pack(fill="both")
+            justify="left", padx=15, pady=15).pack(fill="both")
 
     def voltar():
         win.destroy()
