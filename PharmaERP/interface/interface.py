@@ -87,10 +87,10 @@ def iniciar_janela():
         "pady": 10,
         "relief": "flat",
         "cursor": "hand2",
-        "fg": "#000000",
+        "fg": "#ffffff",
         "bg": "#1f2937",
         "activebackground": "#2ecc71",
-        "activeforeground": "#0A8012",
+        "activeforeground": "#121820",
     }
 
     tk.Button(
@@ -122,7 +122,7 @@ def iniciar_janela():
         pady=10,
         relief="flat",
         cursor="hand2",
-        fg="#110101",
+        fg="#ffffff",
         bg="#c0392b",
         activebackground="#e74c3c",
         activeforeground="#fa0000",
