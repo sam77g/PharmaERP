@@ -213,7 +213,7 @@ VERDE_ESCURO = "#27ae60"
 AMARELO = "#f1c40f"
 VERMELHO = "#c0392b"
 VERMELHO_CLARO = "#e74c3c"
-TEXTO = "#ffffff"
+TEXTO = "#110101"
 TEXTO_SUAVE = "#bdc3c7"
 
 

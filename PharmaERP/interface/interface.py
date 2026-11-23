@@ -87,10 +87,10 @@ def iniciar_janela():
         "pady": 10,
         "relief": "flat",
         "cursor": "hand2",
-        "fg": "#ffffff",
+        "fg": "#000000",
         "bg": "#1f2937",
         "activebackground": "#2ecc71",
-        "activeforeground": "#121820",
+        "activeforeground": "#0A8012",
     }
 
     tk.Button(
@@ -122,9 +122,10 @@ def iniciar_janela():
         pady=10,
         relief="flat",
         cursor="hand2",
-        fg="#ffffff",
+        fg="#110101",
         bg="#c0392b",
         activebackground="#e74c3c",
+        activeforeground="#fa0000",
         command=janela.destroy # encerra a janela
     ).pack(pady=(16, 6))
 
