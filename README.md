@@ -752,6 +752,6 @@ Consulte o arquivo [`LICENSE`](./PharmaERP/docs/LICENSE) para obter o texto comp
 
 **PharmaERP — TDE Estruturas de Dados**
 
-Desenvolvido por **Samuel, Samoel, Marcos e Gabriel**.
+Desenvolvido por **Samuel, Samoel**.
 
 </div>
