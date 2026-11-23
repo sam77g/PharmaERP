@@ -79,11 +79,11 @@ def desfazer_ultima():
                                 if buscar_repo(med) is not None :
                                     cancelar_repo(med)
                         case _ :
-                            print(Fore.RED+"[ERRO] 400 ")
+                            print("[ERRO] 400 ")
                     break
         case "REPOSIÇÃO":
             med = None
-
+            
             # Localiza o medicamento pelo ID
             for m in medicamentos:
                 if m["id"] == mov["id_medicamento"]:
@@ -91,8 +91,8 @@ def desfazer_ultima():
                     break
 
             if med is None:
-                print(Fore.RED + "Medicamento não encontrado.")
-                return
+                print("Medicamento não encontrado.")
+                return False
 
             # Recupera o estoque anterior à reposição
             med["estoque"] = mov["dados"]["estoque"]
