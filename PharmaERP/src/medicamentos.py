@@ -81,7 +81,7 @@ def cadastrar_medicamento(nome, categoria, estoque, preco):
     if validar_medicamento(medicamento, medicamentos) is not True:
         return False, "Dados do medicamento inválidos."
 
-    medicamentos.append(medicamento)
+    medicamentos.append(medicamento) # O(1)
     entrada(medicamento)
 
     # estoque abaixo do mínimo -> abre solicitação de reposição
@@ -114,6 +114,8 @@ def buscar_medicamento(nome):
         return None
 
     nome = nome.strip().lower()
+    # Laço de repetição
+    # compara todos os medicamentos pelo nome
     for medicamento in medicamentos:
         if medicamento["medicamento"].strip().lower() == nome:
             return medicamento
@@ -177,16 +179,16 @@ def remover_medicamento(nome):
 
 # ORDENAR POR PREÇO (Bubble Sort, menor -> maior). Retorna nova lista.
 def ordenar_por_preco(lista):
-    v = lista.copy()
-    for i in range(len(v)):
-        trocou = False
-        for j in range(len(v) - i - 1):
-            if v[j]["preco"] > v[j + 1]["preco"]:
-                v[j], v[j + 1] = v[j + 1], v[j]
-                trocou = True
-        if not trocou:
+    v = lista.copy() # cria uma cópia da lista ( lista de medicamentos )
+    for i in range(len(v)): # laço de repetição
+        trocou = False # flag 
+        for j in range(len(v) - i - 1): # laço aninhado
+            if v[j]["preco"] > v[j + 1]["preco"]: # comapara os preços e verifica se o próximo é maior
+                v[j], v[j + 1] = v[j + 1], v[j] # caso a condição for verdadeira eles trocam de valor
+                trocou = True # indica que houve uma troca
+        if not trocou: # caso a lista já esteja ordenada ele para
             break
-    return v
+    return v # retorna a lista ordenada
 
 
 # =====================================================================
